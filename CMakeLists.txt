@@ -7,7 +7,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(faststreamcompute_core src/program.cpp
     src/record.cpp
-    src/executor.cpp)
+    src/reference_executor.cpp
+    src/bytecode_executor.cpp)
 target_include_directories(faststreamcompute_core PUBLIC include)
 
 add_executable(faststreamcompute src/main.cpp)
@@ -23,4 +24,8 @@ if(BUILD_TESTING)
     add_executable(faststreamcompute_spread_tests tests/test_spread.cpp)
     target_link_libraries(faststreamcompute_spread_tests PRIVATE faststreamcompute_core)
     add_test(NAME spread COMMAND faststreamcompute_spread_tests)
+
+    add_executable(faststreamcompute_bytecode_tests tests/test_bytecode_executor.cpp)
+    target_link_libraries(faststreamcompute_bytecode_tests PRIVATE faststreamcompute_core)
+    add_test(NAME bytecode_matches_reference COMMAND faststreamcompute_bytecode_tests)
 endif()

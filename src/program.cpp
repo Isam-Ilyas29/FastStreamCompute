@@ -59,22 +59,6 @@ namespace faststreamcompute {
         return temp_id;
     }
 
-    NodeId Program::mul(NodeId id1, NodeId id2) {
-        if (!(id1 < nodes.size() && id2 < nodes.size())) {
-            throw std::out_of_range("operand node does not exist");
-        }
-
-        Node n{};
-        n.id = nodes.size();
-        n.operation = Op::MULTIPLICATION;
-        n.lhs = id1;
-        n.rhs = id2;
-
-        NodeId temp_id = n.id;
-        nodes.push_back(std::move(n));
-        return temp_id;
-    }
-
     NodeId Program::sub(NodeId id1, NodeId id2) {
         if (!(id1 < nodes.size() && id2 < nodes.size())) {
             throw std::out_of_range("operand node does not exist");
@@ -86,6 +70,22 @@ namespace faststreamcompute {
         n.lhs = id1;
         n.rhs = id2;
         
+        NodeId temp_id = n.id;
+        nodes.push_back(std::move(n));
+        return temp_id;
+    }
+
+    NodeId Program::mul(NodeId id1, NodeId id2) {
+        if (!(id1 < nodes.size() && id2 < nodes.size())) {
+            throw std::out_of_range("operand node does not exist");
+        }
+
+        Node n{};
+        n.id = nodes.size();
+        n.operation = Op::MULTIPLICATION;
+        n.lhs = id1;
+        n.rhs = id2;
+
         NodeId temp_id = n.id;
         nodes.push_back(std::move(n));
         return temp_id;

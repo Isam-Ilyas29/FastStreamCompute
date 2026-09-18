@@ -1,4 +1,4 @@
-#include "faststreamcompute/executor.hpp"
+#include "faststreamcompute/reference_executor.hpp"
 #include "faststreamcompute/program.hpp"
 #include "faststreamcompute/record.hpp"
 

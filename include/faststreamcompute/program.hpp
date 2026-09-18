@@ -10,8 +10,8 @@ namespace faststreamcompute {
         OUTPUT,
         CONSTANT, 
         ADDITION,
-        MULTIPLICATION,
         SUBTRACTION,
+        MULTIPLICATION,
         DIVISION
     };
 
@@ -39,8 +39,8 @@ namespace faststreamcompute {
             NodeId constant(double val);
 
             NodeId add(NodeId id1, NodeId id2);
-            NodeId mul(NodeId id1, NodeId id2);
             NodeId sub(NodeId id1, NodeId id2);
+            NodeId mul(NodeId id1, NodeId id2);
             NodeId div(NodeId id1, NodeId id2);
 
             const std::vector<Node>& getNodes() const;

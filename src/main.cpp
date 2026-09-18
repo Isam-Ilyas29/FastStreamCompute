@@ -1,6 +1,7 @@
 #include "faststreamcompute/program.hpp"
 #include "faststreamcompute/record.hpp"
-#include "faststreamcompute/executor.hpp"
+#include "faststreamcompute/reference_executor.hpp"
+#include "faststreamcompute/bytecode_exector.hpp"
 
 #include <iostream>
 #include <vector>
@@ -24,16 +25,26 @@ int main() {
 
     std::vector<faststreamcompute::QuoteRecord> records = {{100, 102}, {200, 204}};
 
-    auto results1 = faststreamcompute::executor(records[0], p_midpoint);
+    // auto results1 = faststreamcompute::executor(records[0], p_midpoint);
 
-    for (const auto& [key, value] : results1) {
-        std::cout << "(" << key << ", " << value << ")\n";
-    }
+    // for (const auto& [key, value] : results1) {
+    //     std::cout << "(" << key << ", " << value << ")\n";
+    // }
 
-    auto results2 = faststreamcompute::executor(records[1], p_spread);
+    // auto results2 = faststreamcompute::executor(records[1], p_spread);
 
-    for (const auto& [key, value] : results2) {
-        std::cout << "(" << key << ", " << value << ")\n";
+    // for (const auto& [key, value] : results2) {
+    //     std::cout << "(" << key << ", " << value << ")\n";
+    // }
+
+    faststreamcompute::ExecutionBlueprint bp(p_midpoint);
+    faststreamcompute::BytecodeExecutor executor(bp);
+
+    for (const auto& r : records) {
+        const auto& output = executor.execute(r);
+        for (const auto& o: output) {
+            std::cout << o << '\n';
+        }
     }
 }
 

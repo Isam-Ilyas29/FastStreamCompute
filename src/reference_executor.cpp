@@ -1,4 +1,4 @@
-#include "faststreamcompute/executor.hpp"
+#include "faststreamcompute/reference_executor.hpp"
 
 #include <iostream>
 #include <stdexcept>
@@ -11,9 +11,7 @@ namespace faststreamcompute {
         std::unordered_map<std::string, double> results;
         std::vector<double> values;
 
-        for (size_t i = 0; i < program.getNodes().size(); i++) {
-            const Node& node = program.getNodes()[i];
-            
+        for (const Node& node : program.getNodes()) {
             if (node.operation == Op::CONSTANT) {
                 values.push_back(node.value);
             }
@@ -28,17 +26,17 @@ namespace faststreamcompute {
                     throw std::logic_error("input name is invalid");
                 }
             }
-            else if (node.operation == Op::ADDITION || node.operation == Op::MULTIPLICATION || node.operation == Op::SUBTRACTION || node.operation == Op::DIVISION) {
+            else if (node.operation == Op::ADDITION || node.operation == Op::SUBTRACTION || node.operation == Op::MULTIPLICATION || node.operation == Op::DIVISION) {
                 double lhs = values[node.lhs];
                 double rhs = values[node.rhs];
                 if (node.operation == Op::ADDITION) {
                     values.push_back(lhs+rhs);
                 }
-                else if (node.operation == Op::MULTIPLICATION) {
-                    values.push_back(lhs*rhs);
-                }
                 else if (node.operation == Op::SUBTRACTION) {
                     values.push_back(lhs-rhs);
+                }
+                else if (node.operation == Op::MULTIPLICATION) {
+                    values.push_back(lhs*rhs);
                 }
                 else if (node.operation == Op::DIVISION) {
                     values.push_back(lhs/rhs);
