@@ -1,0 +1,31 @@
+# Local CMake build trees and generated files
+/build/
+/out/
+/cmake-build-*/
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/CTestTestfile.cmake
+/Testing/
+/build.ninja
+/.ninja_*
+/compile_commands.json
+/CMakeUserPresets.json
+
+# Compiler and debugger outputs outside build trees
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+*.exe
+*.pdb
+
+# Local editor and OS files
+/.vscode/
+/.vs/
+.DS_Store
+Thumbs.db
+
+# Research PDFs are local; keep docs/brief.txt trackable
+/docs/*.pdf
