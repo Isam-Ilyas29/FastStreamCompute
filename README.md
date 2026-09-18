@@ -1,6 +1,6 @@
 FastStreamCompute is a C++ engine that takes a small numerical computation, prepares it once into a reusable execution plan, and runs that plan repeatedly over input records.
 
-Initially, I will describe computations through a small C++ builder interface. The builder will describe what operations to perform, rather than immediately performing the calculation. StreamExec will check that description and prepare it for execution.
+Initially, I will describe computations through a small C++ builder interface. The builder will describe what operations to perform, rather than immediately performing the calculation. FastStreamCompute will check that description and prepare it for execution.
 
 My first example will calculate midpoint = (bid + ask) * 0.5. Each input record will contain a bid and an ask; a record containing 100 and 102 will produce 101. The midpoint is only the first example: the same engine should also execute other supported computations, such as spread = ask - bid, without requiring a new execution loop.
 
