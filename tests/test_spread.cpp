@@ -24,7 +24,7 @@ int main() {
     };
 
     for (const auto& test_case : cases) {
-        const auto outputs = faststreamcompute::executor(test_case.record, program);
+        const auto outputs = faststreamcompute::referenceExecutor(test_case.record, program);
         const auto found = outputs.find("spread");
         if (outputs.size() != 1 || found == outputs.end() ||
             found->second != test_case.expected_spread) {

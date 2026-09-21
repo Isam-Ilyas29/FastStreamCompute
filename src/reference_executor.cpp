@@ -7,7 +7,7 @@
 
 
 namespace faststreamcompute {
-    std::unordered_map<std::string, double> executor(const QuoteRecord& record, const Program& program) {
+    std::unordered_map<std::string, double> referenceExecutor(const QuoteRecord& record, const Program& program) {
         std::unordered_map<std::string, double> results;
         std::vector<double> values;
 

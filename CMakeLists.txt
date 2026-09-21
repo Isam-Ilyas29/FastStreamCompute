@@ -8,7 +8,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(faststreamcompute_core src/program.cpp
     src/record.cpp
     src/reference_executor.cpp
-    src/bytecode_executor.cpp)
+    src/bytecode_executor.cpp
+    src/native_kernel.cpp)
 target_include_directories(faststreamcompute_core PUBLIC include)
 
 add_executable(faststreamcompute src/main.cpp)
@@ -32,4 +33,8 @@ if(BUILD_TESTING)
     add_executable(faststreamcompute_program_validation_tests tests/test_program_validation.cpp)
     target_link_libraries(faststreamcompute_program_validation_tests PRIVATE faststreamcompute_core)
     add_test(NAME program_validation COMMAND faststreamcompute_program_validation_tests)
+
+    add_executable(faststreamcompute_native_kernel_tests tests/test_native_kernel.cpp)
+    target_link_libraries(faststreamcompute_native_kernel_tests PRIVATE faststreamcompute_core)
+    add_test(NAME native_kernels COMMAND faststreamcompute_native_kernel_tests)
 endif()

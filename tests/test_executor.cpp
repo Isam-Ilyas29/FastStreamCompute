@@ -48,7 +48,7 @@ int main() {
     };
 
     for (const auto& test_case : cases) {
-        const auto outputs = faststreamcompute::executor(test_case.record, program);
+        const auto outputs = faststreamcompute::referenceExecutor(test_case.record, program);
         if (outputs.size() != 2 ||
             !expect_output(outputs, "midpoint", test_case.expected_midpoint) ||
             !expect_output(outputs, "sum", test_case.expected_sum)) {

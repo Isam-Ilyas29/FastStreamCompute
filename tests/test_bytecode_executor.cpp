@@ -33,7 +33,7 @@ int main() {
     };
 
     for (const auto& record : records) {
-        const auto expected = faststreamcompute::executor(record, program);
+        const auto expected = faststreamcompute::referenceExecutor(record, program);
         const auto& actual = bytecode.execute(record);
         if (actual.size() != names.size() || actual.size() != expected.size()) {
             std::cerr << "Output count differs for bid=" << record.bid

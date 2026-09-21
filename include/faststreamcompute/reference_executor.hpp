@@ -9,5 +9,5 @@
 namespace faststreamcompute {
     
     // Reference Backend
-    std::unordered_map<std::string, double> executor(const QuoteRecord& record, const Program& program);
+    std::unordered_map<std::string, double> referenceExecutor(const QuoteRecord& record, const Program& program);
 }
