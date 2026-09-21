@@ -1,7 +1,7 @@
 #include "faststreamcompute/program.hpp"
 #include "faststreamcompute/record.hpp"
 #include "faststreamcompute/reference_executor.hpp"
-#include "faststreamcompute/bytecode_exector.hpp"
+#include "faststreamcompute/bytecode_executor.hpp"
 
 #include <iostream>
 #include <vector>

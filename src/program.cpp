@@ -5,6 +5,24 @@
 
 
 namespace faststreamcompute {
+    void Program::validateValueOperand(NodeId id) const {
+        if (id >= nodes.size()) {
+            throw std::out_of_range("operand node does not exist");
+        }
+        if (nodes[id].operation == Op::OUTPUT) {
+            throw std::invalid_argument("output node cannot be used as an operand");
+        }
+    }
+
+    bool Program::hasOutputName(const std::string& name) const {
+        for (const Node& node : nodes) {
+            if (node.operation == Op::OUTPUT && node.name == name) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     NodeId Program::inputf64(std::string name) {
         Node n{};
         n.id = nodes.size();
@@ -17,8 +35,9 @@ namespace faststreamcompute {
     }
 
     NodeId Program::emit(std::string name, NodeId source) {
-        if (source >= nodes.size()) {
-            throw std::out_of_range("operand node does not exist");
+        validateValueOperand(source);
+        if (hasOutputName(name)) {
+            throw std::invalid_argument("output name must be unique");
         }
 
         Node n{};
@@ -44,9 +63,8 @@ namespace faststreamcompute {
     }
     
     NodeId Program::add(NodeId id1, NodeId id2) {
-        if (!(id1 < nodes.size() && id2 < nodes.size())) {
-            throw std::out_of_range("operand node does not exist");
-        }
+        validateValueOperand(id1);
+        validateValueOperand(id2);
 
         Node n{};
         n.id = nodes.size();
@@ -60,9 +78,8 @@ namespace faststreamcompute {
     }
 
     NodeId Program::sub(NodeId id1, NodeId id2) {
-        if (!(id1 < nodes.size() && id2 < nodes.size())) {
-            throw std::out_of_range("operand node does not exist");
-        }
+        validateValueOperand(id1);
+        validateValueOperand(id2);
 
         Node n{};
         n.id = nodes.size();
@@ -76,9 +93,8 @@ namespace faststreamcompute {
     }
 
     NodeId Program::mul(NodeId id1, NodeId id2) {
-        if (!(id1 < nodes.size() && id2 < nodes.size())) {
-            throw std::out_of_range("operand node does not exist");
-        }
+        validateValueOperand(id1);
+        validateValueOperand(id2);
 
         Node n{};
         n.id = nodes.size();
@@ -92,9 +108,8 @@ namespace faststreamcompute {
     }
 
     NodeId Program::div(NodeId id1, NodeId id2) {
-        if (!(id1 < nodes.size() && id2 < nodes.size())) {
-            throw std::out_of_range("operand node does not exist");
-        }
+        validateValueOperand(id1);
+        validateValueOperand(id2);
 
         Node n{};
         n.id = nodes.size();

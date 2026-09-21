@@ -1,8 +1,11 @@
+#pragma once
+
 #include "faststreamcompute/program.hpp"
 #include "faststreamcompute/record.hpp"
 
-#include <vector>
+#include <cstddef>
 #include <string>
+#include <vector>
 
 
 namespace faststreamcompute {
@@ -14,7 +17,7 @@ namespace faststreamcompute {
         STORE_OUTPUT_F64
     };
 
-    typedef size_t RegisterID;
+    using RegisterID = std::size_t;
 
     enum class InputField : std::size_t {
         Bid,
@@ -34,7 +37,7 @@ namespace faststreamcompute {
             std::vector<Instruction> instructions;
             std::vector<double> constants;
             std::vector<std::string> output_names;
-            int register_count = 0;
+            std::size_t register_count = 0;
 
         public:
             ExecutionBlueprint(const Program& p);
@@ -42,7 +45,7 @@ namespace faststreamcompute {
             const std::vector<Instruction>& getInstructions() const;
             const std::vector<double>& getConstants() const; 
             const std::vector<std::string>& getOutputNames() const;
-            const int& getRegisterCount() const;
+            std::size_t getRegisterCount() const;
     };
 
     class BytecodeExecutor {
@@ -54,6 +57,7 @@ namespace faststreamcompute {
         public:
             BytecodeExecutor(ExecutionBlueprint bp);
 
+            // The returned output reference is overwritten by the next execute() call
             const std::vector<double>& execute(const QuoteRecord& record);
     };
 }

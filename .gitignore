@@ -27,5 +27,5 @@
 .DS_Store
 Thumbs.db
 
-# Research PDFs are local; keep docs/brief.txt trackable
+# Research PDFs are local;
 /docs/*.pdf

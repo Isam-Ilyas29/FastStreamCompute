@@ -30,6 +30,9 @@ namespace faststreamcompute {
         private:
             std::vector<Node> nodes;
 
+            void validateValueOperand(NodeId id) const;
+            bool hasOutputName(const std::string& name) const;
+
         public:
             // Return node's ID
             NodeId inputf64(std::string name);

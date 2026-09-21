@@ -28,4 +28,8 @@ if(BUILD_TESTING)
     add_executable(faststreamcompute_bytecode_tests tests/test_bytecode_executor.cpp)
     target_link_libraries(faststreamcompute_bytecode_tests PRIVATE faststreamcompute_core)
     add_test(NAME bytecode_matches_reference COMMAND faststreamcompute_bytecode_tests)
+
+    add_executable(faststreamcompute_program_validation_tests tests/test_program_validation.cpp)
+    target_link_libraries(faststreamcompute_program_validation_tests PRIVATE faststreamcompute_core)
+    add_test(NAME program_validation COMMAND faststreamcompute_program_validation_tests)
 endif()

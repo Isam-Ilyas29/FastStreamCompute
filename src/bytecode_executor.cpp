@@ -1,4 +1,4 @@
-#include "faststreamcompute/bytecode_exector.hpp"
+#include "faststreamcompute/bytecode_executor.hpp"
 
 #include <stdexcept>
 
@@ -52,7 +52,7 @@ namespace faststreamcompute {
     const std::vector<std::string>& ExecutionBlueprint::getOutputNames() const {
         return output_names;
     }
-    const int& ExecutionBlueprint::getRegisterCount() const {
+    std::size_t ExecutionBlueprint::getRegisterCount() const {
         return register_count;
     }
 
