@@ -35,7 +35,7 @@ namespace faststreamcompute {
 
         public:
             // Return node's ID
-            NodeId inputf64(std::string name);
+            [[nodiscard]] NodeId inputf64(std::string name);
 
             NodeId emit(std::string name, NodeId source);
 

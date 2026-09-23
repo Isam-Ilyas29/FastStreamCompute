@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <string>
 #include <vector>
+#include <span>
 
 
 namespace faststreamcompute {
@@ -59,5 +60,9 @@ namespace faststreamcompute {
 
             // The returned output reference is overwritten by the next execute() call
             const std::vector<double>& execute(const QuoteRecord& record);
+            std::size_t outputCount() const noexcept;
     };
+
+    // Single output for now
+    void batchExecute(BytecodeExecutor& executor, std::span<const faststreamcompute::QuoteRecord> records, std::span<double> output);
 }

@@ -23,7 +23,7 @@ namespace faststreamcompute {
         return false;
     }
 
-    NodeId Program::inputf64(std::string name) {
+    [[nodiscard]] NodeId Program::inputf64(std::string name) {
         Node n{};
         n.id = nodes.size();
         n.name = std::move(name);

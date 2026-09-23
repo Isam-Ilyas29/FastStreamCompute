@@ -100,4 +100,21 @@ namespace faststreamcompute {
 
         return outputs;
     }
+
+    std::size_t BytecodeExecutor::outputCount() const noexcept {
+        return blueprint.getOutputNames().size();
+    }
+
+    void batchExecute(BytecodeExecutor& executor, std::span<const faststreamcompute::QuoteRecord> records, std::span<double> output) {
+        if (records.size() != output.size()) {
+            throw std::invalid_argument("batch size mismatch");
+        }
+        if (executor.outputCount() != 1) {
+            throw std::invalid_argument("batch requires exactly one output");
+        }
+        
+        for (std::size_t i = 0; i < records.size(); ++i) {
+            output[i] = executor.execute(records[i])[0];
+        }
+    }
 }

@@ -3,6 +3,7 @@
 #include "faststreamcompute/reference_executor.hpp"
 #include "faststreamcompute/bytecode_executor.hpp"
 #include "faststreamcompute/native_kernel.hpp"
+#include "faststreamcompute/record_generator.hpp"
 
 #include <iostream>
 #include <vector>
@@ -10,7 +11,7 @@
 
 
 int main() {
-    std::vector<faststreamcompute::QuoteRecord> records = {{100, 102}, {200, 204}};
+    std::vector<faststreamcompute::QuoteRecord> records = faststreamcompute::generateRecords(1);
 
     // Midpoint -------------------------------------------------------------------
     
@@ -147,8 +148,15 @@ int main() {
     for (const auto& o: relative_spread_kernel_output) {
         std::cout << o << ", ";
     }
+
+    ////////////////////////////////////////////////////////////////////////
+
+    // Batch test
+
+    std::vector<double> outputs(records.size());
+    faststreamcompute::batchExecute(relative_spread_executor, records, outputs);
+    std::cout << "\n\n";
+    for (const double& o: outputs) {
+        std::cout << o << ", ";
+    }
 }
-
-
-
-
