@@ -1,11 +1,53 @@
-FastStreamCompute is a C++ engine that takes a small numerical computation, prepares it once into a reusable execution plan, and runs that plan repeatedly over input records.
+# FastStreamCompute
 
-Initially, I will describe computations through a small C++ builder interface. The builder will describe what operations to perform, rather than immediately performing the calculation. FastStreamCompute will check that description and prepare it for execution.
+FastStreamCompute is a C++ 20 engine that prepares a numerical computation once and runs it repeatedly over input records. The goal is to get a reusable engine closer to the speed of specialised native C++, while keeping it able to run different supported expressions without changing the executor.
 
-My first example will calculate midpoint = (bid + ask) * 0.5. Each input record will contain a bid and an ask; a record containing 100 and 102 will produce 101. The midpoint is only the first example: the same engine should also execute other supported computations, such as spread = ask - bid, without requiring a new execution loop.
+## Progress
 
-I will begin with a straightforward evaluator whose behaviour is easy to understand and test. Later, I will run the same computations through alternative execution backends, starting with register bytecode, and compare their correctness, execution cost and memory use.
+The C++ builder, reference evaluator and scalar register-bytecode executor are working, with correctness tests registered in CTest. Google Benchmark compares midpoint, spread and relative spread against native C++ implementations, measuring execution and preparation separately.
 
-The central question is: What does programmability cost compared with directly writing a specialised C++ calculation, and which design choices reduce that overhead?
+The native implementations are currently faster. Next, I will profile the gap and inspect the assembly to decide what to improve in the executor.
 
-The first version will process records already in memory. File replay and network input can be added later as different ways of supplying records to the same engine. The core remains the execution system—not the network service, parser or trading example.
+## Benchmarks
+
+These charts use [the 23 September 2026 Windows run](docs/benchmarks/bench_260923.json), with 20 repetitions per case. Lower times are better; each dot is a repetition average, not an individual record's latency. These are baseline measurements, not proof of performance on every workload.
+
+### Midpoint
+
+Bytecode execution stays near 5.4 ns per record across batch sizes.
+
+![Midpoint performance](docs/benchmarks/graphs/bench_260923_Midpoint_performance.png)
+
+Native midpoint results vary more at the largest batch size.
+
+![Midpoint variability](docs/benchmarks/graphs/bench_260923_Midpoint_variability.png)
+
+### Spread
+
+Bytecode spread takes roughly 4.1 ns per record across batch sizes.
+
+![Spread performance](docs/benchmarks/graphs/bench_260923_Spread_performance.png)
+
+Bytecode spread results cluster fairly tightly across repetitions.
+
+![Spread variability](docs/benchmarks/graphs/bench_260923_Spread_variability.png)
+
+### Relative spread
+
+Bytecode relative spread takes roughly 5.7–5.9 ns per record.
+
+![Relative spread performance](docs/benchmarks/graphs/bench_260923_RelativeSpread_performance.png)
+
+The largest batch includes an unusually slow bytecode execution repetition.
+
+![Relative spread variability](docs/benchmarks/graphs/bench_260923_RelativeSpread_variability.png)
+
+### Creation and destruction
+
+Median creation and destruction costs range from about 295 to 409 ns.
+
+![BytecodeCreateDestroy performance](docs/benchmarks/graphs/bench_260923_BytecodeCreateDestroy_performance.png)
+
+All three creation benchmarks have occasional slower repetition averages.
+
+![BytecodeCreateDestroy variability](docs/benchmarks/graphs/bench_260923_BytecodeCreateDestroy_variability.png)
