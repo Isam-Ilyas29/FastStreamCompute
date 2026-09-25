@@ -1,0 +1,181 @@
+[isam@IsamsPC FastStreamCompute]$ perf stat -r 5 -e cycles:u,instructions:u -- \
+  ./build/perf/faststreamcompute_bench \
+  --benchmark_filter='^BM_SpreadBytecodeExecute/4096/real_time$' \
+  --benchmark_min_time=100000x
+2026-09-25T15:36:39+01:00
+Running ./build/perf/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 2.02, 1.04, 0.84
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+--------------------------------------------------------------------------------------------------
+Benchmark                                        Time             CPU   Iterations UserCounters...
+--------------------------------------------------------------------------------------------------
+BM_SpreadBytecodeExecute/4096/real_time      38168 ns        38076 ns       100000 items_per_second=107.314M/s
+2026-09-25T15:36:43+01:00
+Running ./build/perf/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 2.02, 1.04, 0.84
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+--------------------------------------------------------------------------------------------------
+Benchmark                                        Time             CPU   Iterations UserCounters...
+--------------------------------------------------------------------------------------------------
+BM_SpreadBytecodeExecute/4096/real_time      40139 ns        39917 ns       100000 items_per_second=102.044M/s
+2026-09-25T15:36:47+01:00
+Running ./build/perf/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 2.18, 1.09, 0.86
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+--------------------------------------------------------------------------------------------------
+Benchmark                                        Time             CPU   Iterations UserCounters...
+--------------------------------------------------------------------------------------------------
+BM_SpreadBytecodeExecute/4096/real_time      41242 ns        40889 ns       100000 items_per_second=99.3155M/s
+2026-09-25T15:36:51+01:00
+Running ./build/perf/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 2.17, 1.11, 0.86
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+--------------------------------------------------------------------------------------------------
+Benchmark                                        Time             CPU   Iterations UserCounters...
+--------------------------------------------------------------------------------------------------
+BM_SpreadBytecodeExecute/4096/real_time      39998 ns        39837 ns       100000 items_per_second=102.406M/s
+2026-09-25T15:36:55+01:00
+Running ./build/perf/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 2.15, 1.12, 0.87
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+--------------------------------------------------------------------------------------------------
+Benchmark                                        Time             CPU   Iterations UserCounters...
+--------------------------------------------------------------------------------------------------
+BM_SpreadBytecodeExecute/4096/real_time      38502 ns        38371 ns       100000 items_per_second=106.385M/s
+
+ Performance counter stats for './build/perf/faststreamcompute_bench --benchmark_filter=^BM_SpreadBytecodeExecute/4096/real_time$ --benchmark_min_time=100000x' (5 runs):
+
+    12,341,446,732      cycles:u                                                                ( +-  0.58% )
+    36,471,108,302      instructions:u                                                          ( +-  0.00% )
+
+       3.966887729 +- 0.056603597 seconds time elapsed  ( +-  1.43% )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[isam@IsamsPC FastStreamCompute]$ perf stat -r 5 -e cycles:u,instructions:u -- \
+  ./build/perf/faststreamcompute_bench \
+  --benchmark_filter='^BM_SpreadNative/4096/real_time$' \
+  --benchmark_min_time=100000x
+2026-09-25T15:37:38+01:00
+Running ./build/perf/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 1.69, 1.15, 0.89
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2368 ns         2357 ns       100000 items_per_second=1.7299G/s
+2026-09-25T15:37:38+01:00
+Running ./build/perf/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 1.69, 1.15, 0.89
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2349 ns         2341 ns       100000 items_per_second=1.74358G/s
+2026-09-25T15:37:38+01:00
+Running ./build/perf/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 1.69, 1.15, 0.89
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2364 ns         2356 ns       100000 items_per_second=1.73251G/s
+2026-09-25T15:37:38+01:00
+Running ./build/perf/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 1.63, 1.14, 0.89
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2386 ns         2366 ns       100000 items_per_second=1.71635G/s
+2026-09-25T15:37:39+01:00
+Running ./build/perf/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 1.63, 1.14, 0.89
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2390 ns         2379 ns       100000 items_per_second=1.71351G/s
+
+ Performance counter stats for './build/perf/faststreamcompute_bench --benchmark_filter=^BM_SpreadNative/4096/real_time$ --benchmark_min_time=100000x' (5 runs):
+
+       741,008,639      cycles:u                                                                ( +-  0.14% )
+     2,064,556,861      instructions:u                                                          ( +-  0.00% )
+
+       0.242413375 +- 0.000778618 seconds time elapsed  ( +-  0.32% )

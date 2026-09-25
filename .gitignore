@@ -1,5 +1,6 @@
 # Local CMake build trees and generated files
 /build/
+/Build/
 /out/
 /cmake-build-*/
 /CMakeFiles/
@@ -29,3 +30,4 @@ Thumbs.db
 
 # Research PDFs are local;
 /docs/*.pdf
+/docs/*.txt
