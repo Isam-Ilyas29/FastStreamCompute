@@ -247,7 +247,7 @@ static void BM_SpreadBytecodeExecute(benchmark::State& state) {
     state.SetItemsProcessed(state.iterations() * state.range(0));
 }
 
-static void BM_SpreadChunkedExecute(benchmark::State& state) {
+static void BM_SpreadChunkedBytecodeExecute(benchmark::State& state) {
     const auto count = static_cast<std::size_t>(state.range(0));
     const auto chunk_capacity = static_cast<std::size_t>(state.range(1));
     const auto records = faststreamcompute::generateRecords(count);
@@ -280,7 +280,7 @@ static void BM_SpreadChunkedExecute(benchmark::State& state) {
     if (!checkOutput(state, output, expected, "after timing")) {
         return;
     }
-    
+
     state.SetItemsProcessed(state.iterations() * state.range(0));
 }
 
@@ -503,9 +503,9 @@ BENCHMARK(BM_MidpointBytecodeCreateExecuteDestroy)->Arg(4096)->Arg(65536)->Arg(1
 
 BENCHMARK(BM_SpreadNative)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
 BENCHMARK(BM_SpreadBytecodeExecute)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
-BENCHMARK(BM_SpreadChunkedExecute)->Args({4096, 256})->Args({65536, 256})->Args({1048576, 256})->UseRealTime()->Unit(benchmark::kNanosecond);
 BENCHMARK(BM_SpreadBytecodeCreateDestroy)->UseRealTime()->Unit(benchmark::kNanosecond);
 BENCHMARK(BM_SpreadBytecodeCreateExecuteDestroy)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
+BENCHMARK(BM_SpreadChunkedBytecodeExecute)->Args({4096, 256})->Args({65536, 256})->Args({1048576, 256})->UseRealTime()->Unit(benchmark::kNanosecond);
 
 BENCHMARK(BM_RelativeSpreadNative)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
 BENCHMARK(BM_RelativeSpreadBytecodeExecute)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
