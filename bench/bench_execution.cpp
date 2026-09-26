@@ -247,6 +247,43 @@ static void BM_SpreadBytecodeExecute(benchmark::State& state) {
     state.SetItemsProcessed(state.iterations() * state.range(0));
 }
 
+static void BM_SpreadChunkedExecute(benchmark::State& state) {
+    const auto count = static_cast<std::size_t>(state.range(0));
+    const auto chunk_capacity = static_cast<std::size_t>(state.range(1));
+    const auto records = faststreamcompute::generateRecords(count);
+    std::vector<double> output(count);
+    const auto program = makeSpreadProgram();
+    const auto expected = makeExpected(records, program, "spread");
+
+    faststreamcompute::ExecutionBlueprint blueprint(program);
+    faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
+
+    // Warmup
+    for (int warmup = 0; warmup < 3; ++warmup) {
+        executor.execute(records, output);
+    }
+
+    // Correctness check
+    if (!checkOutput(state, output, expected, "before timing")) {
+        return;
+    }
+
+    auto* output_data = output.data();
+    benchmark::DoNotOptimize(output_data);
+
+    for (auto _ : state) {
+        executor.execute(records, output);
+        benchmark::ClobberMemory();
+    }
+
+    // Correctness check
+    if (!checkOutput(state, output, expected, "after timing")) {
+        return;
+    }
+    
+    state.SetItemsProcessed(state.iterations() * state.range(0));
+}
+
 static void BM_RelativeSpreadBytecodeExecute(benchmark::State& state) {
     const auto count = static_cast<std::size_t>(state.range(0));
     const auto records = faststreamcompute::generateRecords(count);
@@ -466,6 +503,7 @@ BENCHMARK(BM_MidpointBytecodeCreateExecuteDestroy)->Arg(4096)->Arg(65536)->Arg(1
 
 BENCHMARK(BM_SpreadNative)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
 BENCHMARK(BM_SpreadBytecodeExecute)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
+BENCHMARK(BM_SpreadChunkedExecute)->Args({4096, 256})->Args({65536, 256})->Args({1048576, 256})->UseRealTime()->Unit(benchmark::kNanosecond);
 BENCHMARK(BM_SpreadBytecodeCreateDestroy)->UseRealTime()->Unit(benchmark::kNanosecond);
 BENCHMARK(BM_SpreadBytecodeCreateExecuteDestroy)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
 
