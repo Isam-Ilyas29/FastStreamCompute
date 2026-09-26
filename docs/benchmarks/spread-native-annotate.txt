@@ -1,0 +1,212 @@
+ Percent |	Source code & Disassembly of faststreamcompute_bench for cycles:u (57 samples, percent: local period)
+---------------------------------------------------------------------------------------------------------------------
+         :
+         :
+         :
+         : 3     Disassembly of section .text:
+         :
+         : 5     000000000001f1f0 <faststreamcompute::spreadAOS(std::span<faststreamcompute::QuoteRecord const, 18446744073709551615ul>, std::span<double, 18446744073709551615ul>)>:
+         : 6     output[i] = sum * 0.5;
+         : 7     }
+         : 8     }
+         :
+         : 10    void spreadAOS(std::span<const faststreamcompute::QuoteRecord> input, std::span<double> output) {
+         : 11    if (input.size() != output.size()) {
+    0.00 :   1f1f0:  cmp    %rcx,%rsi
+    0.00 :   1f1f3:  jne    9903 <faststreamcompute::spreadAOS(std::span<faststreamcompute::QuoteRecord const, 18446744073709551615ul>, std::span<double, 18446744073709551615ul>) [clone .cold]>
+         : 14    throw std::invalid_argument("spread size mismatch");
+         : 15    }
+         :
+         : 17    for (std::size_t i = 0; i < input.size(); ++i) {
+    0.00 :   1f1f9:  test   %rsi,%rsi
+    0.00 :   1f1fc:  je     1f320 <faststreamcompute::spreadAOS(std::span<faststreamcompute::QuoteRecord const, 18446744073709551615ul>, std::span<double, 18446744073709551615ul>)+0x130>
+    0.00 :   1f202:  lea    -0x1(%rsi),%rax
+    0.00 :   1f206:  mov    %rdx,%r8
+    0.00 :   1f209:  cmp    $0x3,%rax
+    0.00 :   1f20d:  jbe    1f2d8 <faststreamcompute::spreadAOS(std::span<faststreamcompute::QuoteRecord const, 18446744073709551615ul>, std::span<double, 18446744073709551615ul>)+0xe8>
+    0.00 :   1f213:  lea    (%rdx,%rsi,8),%rax
+    0.00 :   1f217:  cmp    %rax,%rdi
+    0.00 :   1f21a:  jae    1f22f <faststreamcompute::spreadAOS(std::span<faststreamcompute::QuoteRecord const, 18446744073709551615ul>, std::span<double, 18446744073709551615ul>)+0x3f>
+    0.00 :   1f21c:  mov    %rsi,%rax
+    0.00 :   1f21f:  shl    $0x4,%rax
+    0.00 :   1f223:  add    %rdi,%rax
+    0.00 :   1f226:  cmp    %rax,%rdx
+    0.00 :   1f229:  jb     1f2d8 <faststreamcompute::spreadAOS(std::span<faststreamcompute::QuoteRecord const, 18446744073709551615ul>, std::span<double, 18446744073709551615ul>)+0xe8>
+    0.00 :   1f22f:  mov    %rsi,%r9
+    0.00 :   1f232:  mov    %rdi,%rax
+    0.00 :   1f235:  mov    %r8,%rdx
+    0.00 :   1f238:  shr    $1,%r9
+    0.00 :   1f23b:  mov    %r9,%rcx
+    0.00 :   1f23e:  shl    $0x5,%rcx
+    0.00 :   1f242:  add    %rdi,%rcx
+    0.00 :   1f245:  nopl   0x0(%rax)
+    0.00 :   1f249:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   1f254:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   1f25f:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   1f26a:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   1f275:  data16 cs nopw 0x0(%rax,%rax,1)
+         : 45    output[i] = input[i].ask - input[i].bid;
+    5.62 :   1f280:  movupd (%rax),%xmm0
+   10.45 :   1f284:  movupd 0x10(%rax),%xmm1
+    9.20 :   1f289:  add    $0x20,%rax
+    9.30 :   1f28d:  add    $0x10,%rdx
+    2.36 :   1f291:  movlpd -0x18(%rax),%xmm1
+   12.12 :   1f296:  movhpd -0x10(%rax),%xmm0
+   15.83 :   1f29b:  subpd  %xmm0,%xmm1
+   26.41 :   1f29f:  movups %xmm1,-0x10(%rdx)
+         : 54    for (std::size_t i = 0; i < input.size(); ++i) {
+    8.70 :   1f2a3:  cmp    %rcx,%rax
+    0.00 :   1f2a6:  jne    1f280 <faststreamcompute::spreadAOS(std::span<faststreamcompute::QuoteRecord const, 18446744073709551615ul>, std::span<double, 18446744073709551615ul>)+0x90>
+    0.00 :   1f2a8:  lea    (%r9,%r9,1),%rax
+    0.00 :   1f2ac:  cmp    %rax,%rsi
+    0.00 :   1f2af:  je     1f2d0 <faststreamcompute::spreadAOS(std::span<faststreamcompute::QuoteRecord const, 18446744073709551615ul>, std::span<double, 18446744073709551615ul>)+0xe0>
+         : 60    [[nodiscard]]
+         : 61    constexpr reference
+         : 62    operator[](size_type __idx) const noexcept
+         : 63    {
+         : 64    __glibcxx_assert(__idx < size());
+         : 65    return *(this->_M_ptr + __idx);
+    0.00 :   1f2b1:  mov    %r9,%rax
+         : 67    output[i] = input[i].ask - input[i].bid;
+    0.00 :   1f2b4:  shl    $0x4,%r9
+    0.00 :   1f2b8:  shl    $0x5,%rax
+    0.00 :   1f2bc:  add    %rdi,%rax
+    0.00 :   1f2bf:  movsd  0x8(%rax),%xmm0
+    0.00 :   1f2c4:  subsd  (%rax),%xmm0
+    0.00 :   1f2c8:  movsd  %xmm0,(%r8,%r9,1)
+         : 74    for (std::size_t i = 0; i < input.size(); ++i) {
+    0.00 :   1f2ce:  ret
+    0.00 :   1f2cf:  nop
+    0.00 :   1f2d0:  ret
+    0.00 :   1f2d1:  nopl   0x0(%rax)
+    0.00 :   1f2d8:  shl    $0x4,%rsi
+    0.00 :   1f2dc:  mov    %rdi,%rax
+    0.00 :   1f2df:  mov    %r8,%rdx
+    0.00 :   1f2e2:  add    %rdi,%rsi
+    0.00 :   1f2e5:  nopl   0x0(%rax,%rax,1)
+    0.00 :   1f2ea:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   1f2f5:  data16 cs nopw 0x0(%rax,%rax,1)
+         : 86    output[i] = input[i].ask - input[i].bid;
+    0.00 :   1f300:  movsd  0x8(%rax),%xmm0
+    0.00 :   1f305:  subsd  (%rax),%xmm0
+         : 89    for (std::size_t i = 0; i < input.size(); ++i) {
+    0.00 :   1f309:  add    $0x10,%rax
+    0.00 :   1f30d:  add    $0x8,%rdx
+         : 92    output[i] = input[i].ask - input[i].bid;
+    0.00 :   1f311:  movsd  %xmm0,-0x8(%rdx)
+         : 94    for (std::size_t i = 0; i < input.size(); ++i) {
+    0.00 :   1f316:  cmp    %rax,%rsi
+    0.00 :   1f319:  jne    1f300 <faststreamcompute::spreadAOS(std::span<faststreamcompute::QuoteRecord const, 18446744073709551615ul>, std::span<double, 18446744073709551615ul>)+0x110>
+    0.00 :   1f31b:  ret
+    0.00 :   1f31c:  nopl   0x0(%rax)
+    0.00 :   1f320:  ret
+ Percent |	Source code & Disassembly of libstdc++.so.6.0.36 for cycles:u (1 samples, percent: local period)
+----------------------------------------------------------------------------------------------------------------
+         :
+         :
+         :
+         : 3     Disassembly of section .text:
+         :
+         : 5     00000000000b5e40 <std::_Hash_bytes(void const*, unsigned long, unsigned long)>:
+         : 6     #elif __SIZEOF_SIZE_T__ == 8
+         :
+         : 8     // Implementation of Murmur hash for 64-bit size_t.
+         : 9     size_t
+         : 10    _Hash_bytes(const void* ptr, size_t len, size_t seed)
+         : 11    {
+    0.00 :   b5e40:  endbr64
+    0.00 :   b5e44:  mov    %rdx,%rax
+         :
+         : 15    // Remove the bytes not divisible by the sizeof(size_t).  This
+         : 16    // allows the main loop to process the data as 64-bit integers.
+         : 17    const size_t len_aligned = len & ~(size_t)0x7;
+         : 18    const char* const end = buf + len_aligned;
+         : 19    size_t hash = seed ^ (len * mul);
+    0.00 :   b5e47:  mov    %rsi,%r8
+         : 21    const size_t len_aligned = len & ~(size_t)0x7;
+    0.00 :   b5e4a:  mov    %rsi,%r9
+         : 23    {
+    0.00 :   b5e4d:  mov    %rdi,%rcx
+         : 25    size_t hash = seed ^ (len * mul);
+    0.00 :   b5e50:  movabs $0xc6a4a7935bd1e995,%rdx
+         : 27    const size_t len_aligned = len & ~(size_t)0x7;
+    0.00 :   b5e5a:  and    $0xfffffffffffffff8,%r9
+         : 29    size_t hash = seed ^ (len * mul);
+    0.00 :   b5e5e:  imul   %rdx,%r8
+         : 31    const char* const end = buf + len_aligned;
+    0.00 :   b5e62:  add    %rdi,%r9
+         : 33    size_t hash = seed ^ (len * mul);
+    0.00 :   b5e65:  xor    %rax,%r8
+         : 35    for (const char* p = buf; p != end; p += 8)
+    0.00 :   b5e68:  cmp    %r9,%rdi
+    0.00 :   b5e6b:  je     b5ea8 <std::_Hash_bytes(void const*, unsigned long, unsigned long)+0x68>
+    0.00 :   b5e6d:  nopl   0x0(%rax,%rax,1)
+    0.00 :   b5e75:  data16 cs nopw 0x0(%rax,%rax,1)
+         : 40    {
+         : 41    const size_t data = shift_mix(unaligned_load(p) * mul) * mul;
+    0.00 :   b5e80:  mov    (%rcx),%rdi
+         : 43    for (const char* p = buf; p != end; p += 8)
+    0.00 :   b5e83:  add    $0x8,%rcx
+         : 45    const size_t data = shift_mix(unaligned_load(p) * mul) * mul;
+    0.00 :   b5e87:  imul   %rdx,%rdi
+         : 47    { return v ^ (v >> 47);}
+    0.00 :   b5e8b:  mov    %rdi,%rax
+    0.00 :   b5e8e:  shr    $0x2f,%rax
+    0.00 :   b5e92:  xor    %rdi,%rax
+         : 51    const size_t data = shift_mix(unaligned_load(p) * mul) * mul;
+    0.00 :   b5e95:  imul   %rdx,%rax
+         : 53    hash ^= data;
+    0.00 :   b5e99:  xor    %r8,%rax
+         : 55    hash *= mul;
+    0.00 :   b5e9c:  imul   %rdx,%rax
+    0.00 :   b5ea0:  mov    %rax,%r8
+         : 58    for (const char* p = buf; p != end; p += 8)
+    0.00 :   b5ea3:  cmp    %rcx,%r9
+    0.00 :   b5ea6:  jne    b5e80 <std::_Hash_bytes(void const*, unsigned long, unsigned long)+0x40>
+         : 61    }
+         : 62    if ((len & 0x7) != 0)
+    0.00 :   b5ea8:  and    $0x7,%esi
+    0.00 :   b5eab:  je     b5ee6 <std::_Hash_bytes(void const*, unsigned long, unsigned long)+0xa6>
+         : 65    --n;
+    0.00 :   b5ead:  lea    -0x1(%rsi),%edx
+         : 67    result = (result << 8) + static_cast<unsigned char>(p[n]);
+    0.00 :   b5eb0:  add    %rsi,%r9
+         : 69    std::size_t result = 0;
+    0.00 :   b5eb3:  xor    %eax,%eax
+    0.00 :   b5eb5:  movslq %edx,%rdx
+         : 72    result = (result << 8) + static_cast<unsigned char>(p[n]);
+    0.00 :   b5eb8:  sub    %rdx,%r9
+    0.00 :   b5ebb:  nopl   0x0(%rax,%rax,1)
+    0.00 :   b5ec0:  movzbl -0x1(%r9,%rdx,1),%ecx
+  100.00 :   b5ec6:  shl    $0x8,%rax
+         : 77    while (--n >= 0);
+    0.00 :   b5eca:  sub    $0x1,%rdx
+         : 79    result = (result << 8) + static_cast<unsigned char>(p[n]);
+    0.00 :   b5ece:  add    %rcx,%rax
+         : 81    while (--n >= 0);
+    0.00 :   b5ed1:  test   %edx,%edx
+    0.00 :   b5ed3:  jns    b5ec0 <std::_Hash_bytes(void const*, unsigned long, unsigned long)+0x80>
+         : 84    {
+         : 85    const size_t data = load_bytes(end, len & 0x7);
+         : 86    hash ^= data;
+    0.00 :   b5ed5:  xor    %r8,%rax
+         : 88    hash *= mul;
+    0.00 :   b5ed8:  movabs $0xc6a4a7935bd1e995,%r8
+    0.00 :   b5ee2:  imul   %rax,%r8
+         : 91    }
+         : 92    hash = shift_mix(hash) * mul;
+    0.00 :   b5ee6:  movabs $0xc6a4a7935bd1e995,%rax
+         : 94    { return v ^ (v >> 47);}
+    0.00 :   b5ef0:  mov    %r8,%rdx
+    0.00 :   b5ef3:  shr    $0x2f,%rdx
+    0.00 :   b5ef7:  xor    %r8,%rdx
+         : 98    hash = shift_mix(hash) * mul;
+    0.00 :   b5efa:  imul   %rax,%rdx
+         : 100   { return v ^ (v >> 47);}
+    0.00 :   b5efe:  mov    %rdx,%rax
+    0.00 :   b5f01:  shr    $0x2f,%rax
+    0.00 :   b5f05:  xor    %rdx,%rax
+         : 104   hash = shift_mix(hash);
+         : 105   return hash;
+         : 106   }
+    0.00 :   b5f08:  ret

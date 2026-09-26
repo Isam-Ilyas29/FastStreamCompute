@@ -1,0 +1,68 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 768  of event 'cycles:u'
+# Event count (approx.): 12169196298
+#
+# Overhead  Command          Shared Object            Symbol                                                                                                                                                                                       
+# ........  ...............  .......................  .............................................................................................................................................................................................
+#
+    80.61%  faststreamcompu  faststreamcompute_bench  [.] faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)
+            |          
+            |--59.13%--execute (inlined)
+            |          batchExecute (inlined)
+            |          BM_SpreadBytecodeExecute (inlined)
+            |          Run (inlined)
+            |          RunInThread (inlined)
+            |          operator() (inlined)
+            |          RunThreads (inlined)
+            |          DoNIterations (inlined)
+            |          DoOneRepetition (inlined)
+            |          RunBenchmarks (inlined)
+            |          
+            |--17.96%--operator[] (inlined)
+            |          execute (inlined)
+            |          batchExecute (inlined)
+            |          BM_SpreadBytecodeExecute (inlined)
+            |          Run (inlined)
+            |          RunInThread (inlined)
+            |          operator() (inlined)
+            |          RunThreads (inlined)
+            |          DoNIterations (inlined)
+            |          DoOneRepetition (inlined)
+            |          RunBenchmarks (inlined)
+            |          
+             --3.52%--__normal_iterator (inlined)
+                       end (inlined)
+                       execute (inlined)
+                       batchExecute (inlined)
+                       BM_SpreadBytecodeExecute (inlined)
+                       Run (inlined)
+                       RunInThread (inlined)
+                       operator() (inlined)
+                       RunThreads (inlined)
+                       DoNIterations (inlined)
+                       DoOneRepetition (inlined)
+                       RunBenchmarks (inlined)
+
+    19.34%  faststreamcompu  faststreamcompute_bench  [.] faststreamcompute::batchExecute(faststreamcompute::BytecodeExecutor&, std::span<faststreamcompute::QuoteRecord const, 18446744073709551615ul>, std::span<double, 18446744073709551615ul>)
+            |
+            ---batchExecute (inlined)
+               BM_SpreadBytecodeExecute (inlined)
+               Run (inlined)
+               RunInThread (inlined)
+               operator() (inlined)
+               RunThreads (inlined)
+               DoNIterations (inlined)
+               DoOneRepetition (inlined)
+               RunBenchmarks (inlined)
+
+     0.03%  faststreamcompu  libstdc++.so.6.0.36      [.] std::__detail::_Prime_rehash_policy::_M_next_bkt(unsigned long) const
+     0.02%  faststreamcompu  ld-linux-x86-64.so.2     [.] 0x000000000000bae3
+
+
+#
+# (Tip: Print event counts in machine readable CSV format with: perf stat -x\;)
+#

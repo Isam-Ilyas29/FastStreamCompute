@@ -1,0 +1,8 @@
+For Spread over 4,096 records, bytecode interpretation takes 16.9x longer, has 17.7x more instructions, executions 16.7x more instruction, but marginally has a 
+higher IPC. perf record had majority of samples (80%)  inside BytecodeExecutor::execute, there I performed perf annotate to view the assembly. Initially,
+I saw the native implementation using SIMD so investigated that. So, I used compiler flags "-fno-tree-loop-vectorize", "-fno-tree-slp-vectorize" and
+remeasured. I found that that in this instance bytecode interpretation was only 12.2x slower. With vectorisation enabled, native executes: 28.5% fewer instructions 
+and 12.8% fewer cycles. The faster version has lowe IPC so IPC alone does not mean a faster program. Surprisingly, native performance only improved by 1.17x and
+bytecode performance also improved by 1.14x. However, I believe that the biggest improvement can come from bytecode executing less instructions since it has a higher IPC
+than native and runs 17.7x more instructions than native. It calculates opcodes and operands every instruction for batchExecute even if it is the same, I should find a 
+way to reduce this control logic. Contiguous arithmetic loops should strive to enable automatic vectorisation.

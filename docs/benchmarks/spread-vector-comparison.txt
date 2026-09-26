@@ -1,0 +1,199 @@
+Benchmark                       | Vectorisation enabled / ns | Vectorisation disabled / ns
+--------------------------------|----------------------------|----------------------------
+BM_SpreadNative/4096             | A =               2,383.70 | B =               2,791.32
+BM_SpreadBytecodeExecute/4096     | C =              39,202.70 | D =              34,395.60
+
+Values are Time medians (JSON real_time), in ns per batch of 4,096 records,
+from five repetitions. Ratios below use the unrounded values.
+
+Native benefit from automatic vectorisation = B / A
+  2,791.32 / 2,383.70 = 1.17x
+
+Remaining bytecode slowdown with vectorisation disabled = D / B
+  34,395.60 / 2,791.32 = 12.32x
+
+Interpretation:
+Automatic vectorisation helps native spread: it is about 1.17x faster when enabled.
+With automatic vectorisation disabled in both builds, bytecode spread still takes
+about 12.32 times as long as native spread. A substantial gap remains.
+This does not prove that all the remaining gap is dispatch overhead.
+
+Sources:
+  spread-vector-on.json
+  spread-vector-off.json
+
+
+
+==================================================================================================================================================
+
+
+
+[isam@IsamsPC FastStreamCompute]$ perf stat -r 5 -e cycles:u,instructions:u -- \
+  ./build/vector-on/faststreamcompute_bench \
+  --benchmark_filter='^BM_SpreadNative/4096/real_time$' \
+  --benchmark_min_time=1000000x
+2026-09-26T11:22:46+01:00
+Running ./build/vector-on/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 0.47, 1.05, 0.96
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2360 ns         2330 ns      1000000 items_per_second=1.73593G/s
+2026-09-26T11:22:49+01:00
+Running ./build/vector-on/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 0.52, 1.05, 0.96
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2253 ns         2248 ns      1000000 items_per_second=1.81768G/s
+2026-09-26T11:22:51+01:00
+Running ./build/vector-on/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 0.52, 1.05, 0.96
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2261 ns         2256 ns      1000000 items_per_second=1.8116G/s
+2026-09-26T11:22:53+01:00
+Running ./build/vector-on/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 0.56, 1.05, 0.96
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2250 ns         2245 ns      1000000 items_per_second=1.8203G/s
+2026-09-26T11:22:56+01:00
+Running ./build/vector-on/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 0.56, 1.05, 0.96
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2252 ns         2247 ns      1000000 items_per_second=1.81877G/s
+
+ Performance counter stats for './build/vector-on/faststreamcompute_bench --benchmark_filter=^BM_SpreadNative/4096/real_time$ --benchmark_min_time=1000000x' (5 runs):
+
+     7,277,250,407      cycles:u                                                                ( +-  0.20% )
+    20,538,859,154      instructions:u                                                          ( +-  0.00% )
+
+       2.280716739 +- 0.021228085 seconds time elapsed  ( +-  0.93% )
+
+
+
+==================================================================================================================================================
+
+
+
+[isam@IsamsPC FastStreamCompute]$ perf stat -r 5 -e cycles:u,instructions:u -- \
+  ./build/vector-off/faststreamcompute_bench \
+  --benchmark_filter='^BM_SpreadNative/4096/real_time$' \
+  --benchmark_min_time=1000000x
+2026-09-26T11:23:42+01:00
+Running ./build/vector-off/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 0.57, 0.99, 0.95
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2695 ns         2674 ns      1000000 items_per_second=1.51968G/s
+2026-09-26T11:23:45+01:00
+Running ./build/vector-off/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 0.57, 0.99, 0.95
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2644 ns         2633 ns      1000000 items_per_second=1.54925G/s
+2026-09-26T11:23:48+01:00
+Running ./build/vector-off/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 0.60, 0.99, 0.95
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2600 ns         2593 ns      1000000 items_per_second=1.57517G/s
+2026-09-26T11:23:50+01:00
+Running ./build/vector-off/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 0.60, 0.99, 0.95
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2626 ns         2618 ns      1000000 items_per_second=1.55987G/s
+2026-09-26T11:23:53+01:00
+Running ./build/vector-off/faststreamcompute_bench
+Run on (12 X 4000 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 0.64, 0.99, 0.95
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-----------------------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations UserCounters...
+-----------------------------------------------------------------------------------------
+BM_SpreadNative/4096/real_time       2623 ns         2614 ns      1000000 items_per_second=1.56162G/s
+
+ Performance counter stats for './build/vector-off/faststreamcompute_bench --benchmark_filter=^BM_SpreadNative/4096/real_time$ --benchmark_min_time=1000000x' (5 runs):
+
+     8,347,503,347      cycles:u                                                                ( +-  0.28% )
+    28,707,857,956      instructions:u                                                          ( +-  0.00% )
+
+       2.642765463 +- 0.015988372 seconds time elapsed  ( +-  0.60% )

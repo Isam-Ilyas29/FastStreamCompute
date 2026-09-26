@@ -63,6 +63,18 @@ namespace faststreamcompute {
             std::size_t outputCount() const noexcept;
     };
 
+    class ChunkedBytecodeExecutor {
+        private:
+            ExecutionBlueprint blueprint;
+            std::size_t chunk_capacity;
+            std::vector<double> scratch;
+
+        public:
+            ChunkedBytecodeExecutor(ExecutionBlueprint bp, std::size_t capacity);
+            void execute(const std::vector<QuoteRecord>& records, std::span<double> output);
+
+    };
+
     // Single output for now
     void batchExecute(BytecodeExecutor& executor, std::span<const faststreamcompute::QuoteRecord> records, std::span<double> output);
 }

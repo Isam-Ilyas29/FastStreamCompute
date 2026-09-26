@@ -1,0 +1,30 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 59  of event 'cycles:u'
+# Event count (approx.): 825720301
+#
+# Overhead  Command          Shared Object            Symbol                                                                                                                                              
+# ........  ...............  .......................  ....................................................................................................................................................
+#
+    99.30%  faststreamcompu  faststreamcompute_bench  [.] faststreamcompute::spreadAOS(std::span<faststreamcompute::QuoteRecord const, 18446744073709551615ul>, std::span<double, 18446744073709551615ul>)
+            |
+            ---spreadAOS (inlined)
+               BM_SpreadNative (inlined)
+               Run (inlined)
+               RunInThread (inlined)
+               operator() (inlined)
+               RunThreads (inlined)
+               DoNIterations (inlined)
+               DoOneRepetition (inlined)
+               RunBenchmarks (inlined)
+
+     0.40%  faststreamcompu  libstdc++.so.6.0.36      [.] std::_Hash_bytes(void const*, unsigned long, unsigned long)
+     0.30%  faststreamcompu  ld-linux-x86-64.so.2     [.] 0x000000000000af5a
+
+
+#
+# (Tip: If you have debuginfo enabled, try: perf report -s sym,srcline)
+#

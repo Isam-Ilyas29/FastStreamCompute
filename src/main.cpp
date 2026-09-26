@@ -11,7 +11,7 @@
 
 
 int main() {
-    std::vector<faststreamcompute::QuoteRecord> records = faststreamcompute::generateRecords(1);
+    std::vector<faststreamcompute::QuoteRecord> records = faststreamcompute::generateRecords(10);
 
     // Midpoint -------------------------------------------------------------------
     
@@ -157,6 +157,15 @@ int main() {
     faststreamcompute::batchExecute(relative_spread_executor, records, outputs);
     std::cout << "\n\n";
     for (const double& o: outputs) {
+        std::cout << o << ", ";
+    }
+
+    // Chunk test
+    std::vector<double> outputs2(records.size());
+    faststreamcompute::ChunkedBytecodeExecutor cbe(spread_p, 256);
+    cbe.execute(records, outputs2);
+    std::cout << "\n\n\nchunk:\n";
+    for (const double& o: outputs2) {
         std::cout << o << ", ";
     }
 }

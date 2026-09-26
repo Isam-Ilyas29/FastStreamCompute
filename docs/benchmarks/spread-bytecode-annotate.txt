@@ -1,0 +1,192 @@
+ Percent |	Source code & Disassembly of faststreamcompute_bench for cycles:u (618 samples, percent: local period)
+----------------------------------------------------------------------------------------------------------------------
+         :
+         :
+         :
+         : 3     Disassembly of section .text:
+         :
+         : 5     000000000001ee30 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)>:
+         : 6     : _M_current() { }
+         :
+         : 8     __attribute__((__always_inline__))
+         : 9     explicit _GLIBCXX_CONSTEXPR
+         : 10    __normal_iterator(const _Iterator& __i) _GLIBCXX_NOEXCEPT
+         : 11    : _M_current(__i) { }
+    0.00 :   1ee30:  mov    (%rdi),%rdx
+    4.37 :   1ee33:  mov    0x8(%rdi),%r8
+         : 14    return register_count;
+         : 15    }
+         :
+         : 17    BytecodeExecutor::BytecodeExecutor(ExecutionBlueprint bp) : blueprint(bp), registers(bp.getRegisterCount()), outputs(bp.getOutputNames().size()) { }
+         :
+         : 19    const std::vector<double>& BytecodeExecutor::execute(const QuoteRecord& record) {
+    0.00 :   1ee37:  mov    %rdi,%rax
+         : 21    for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   1ee3a:  cmp    %r8,%rdx
+    0.00 :   1ee3d:  je     1f000 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x1d0>
+         : 24    const std::vector<double>& BytecodeExecutor::execute(const QuoteRecord& record) {
+    0.00 :   1ee43:  sub    $0x18,%rsp
+         : 26    _GLIBCXX_NODISCARD _GLIBCXX20_CONSTEXPR
+         : 27    reference
+         : 28    operator[](size_type __n) _GLIBCXX_NOEXCEPT
+         : 29    {
+         : 30    __glibcxx_requires_subscript(__n);
+         : 31    return *(this->_M_impl._M_start + __n);
+    3.04 :   1ee47:  mov    0x50(%rdi),%rdi
+    0.00 :   1ee4b:  mov    0x68(%rax),%r10
+    0.00 :   1ee4f:  mov    %rsi,%r11
+    0.00 :   1ee52:  mov    %rbx,0x8(%rsp)
+         : 36    _GLIBCXX_NODISCARD _GLIBCXX20_CONSTEXPR
+         : 37    const_reference
+         : 38    operator[](size_type __n) const _GLIBCXX_NOEXCEPT
+         : 39    {
+         : 40    __glibcxx_requires_subscript(__n);
+         : 41    return *(this->_M_impl._M_start + __n);
+    4.06 :   1ee57:  mov    0x18(%rax),%r9
+         : 43    switch (i.op) {
+    0.00 :   1ee5b:  lea    0x6046a(%rip),%rsi        # 7f2cc <std::piecewise_construct+0x45e>
+    0.00 :   1ee62:  nopl   (%rax)
+    0.00 :   1ee65:  data16 cs nopw 0x0(%rax,%rax,1)
+    2.59 :   1ee70:  cmpl   $0x7,(%rdx)
+    3.77 :   1ee73:  ja     97d2 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&) [clone .cold]>
+    0.16 :   1ee79:  mov    (%rdx),%ecx
+    6.87 :   1ee7b:  movslq (%rsi,%rcx,4),%rcx
+    4.55 :   1ee7f:  add    %rsi,%rcx
+    4.42 :   1ee82:  jmp    *%rcx
+    0.00 :   1ee84:  nopl   0x0(%rax)
+    0.00 :   1ee88:  mov    0x20(%rdx),%rcx
+         : 55    registers[i.dst] = record.ask;
+         : 56    }
+         : 57    break;
+         : 58    }
+         : 59    case OpCode::CONST_F64:
+         : 60    registers[i.dst] = blueprint.getConstants()[i.auxiliary];
+    0.00 :   1ee8c:  movsd  (%r9,%rcx,8),%xmm0
+         : 62    return *(this->_M_impl._M_start + __n);
+    0.00 :   1ee92:  mov    0x8(%rdx),%rcx
+    0.00 :   1ee96:  movsd  %xmm0,(%rdi,%rcx,8)
+         : 65    for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   1ee9b:  add    $0x28,%rdx
+    0.00 :   1ee9f:  cmp    %rdx,%r8
+    0.00 :   1eea2:  jne    1ee70 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x40>
+         : 69    break;
+         : 70    }
+         : 71    }
+         :
+         : 73    return outputs;
+         : 74    }
+    0.00 :   1eea4:  mov    0x8(%rsp),%rbx
+         : 76    return outputs;
+    0.00 :   1eea9:  add    $0x68,%rax
+         : 78    }
+    3.74 :   1eead:  add    $0x18,%rsp
+    0.00 :   1eeb1:  ret
+    0.00 :   1eeb2:  nopw   0x0(%rax,%rax,1)
+    0.00 :   1eeb8:  mov    0x10(%rdx),%rcx
+         : 83    for (const Instruction& i: blueprint.getInstructions()) {
+    4.87 :   1eebc:  add    $0x28,%rdx
+         : 85    outputs[i.auxiliary] = registers[i.src0];
+    0.14 :   1eec0:  movsd  (%rdi,%rcx,8),%xmm0
+    9.79 :   1eec5:  mov    -0x8(%rdx),%rcx
+    0.00 :   1eec9:  movsd  %xmm0,(%r10,%rcx,8)
+         : 89    for (const Instruction& i: blueprint.getInstructions()) {
+    7.02 :   1eecf:  cmp    %rdx,%r8
+    0.00 :   1eed2:  jne    1ee70 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x40>
+    0.00 :   1eed4:  jmp    1eea4 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x74>
+    0.00 :   1eed6:  cs nopw 0x0(%rax,%rax,1)
+         : 94    registers[i.dst]  = registers[i.src0] / registers[i.src1];
+    0.00 :   1eee0:  mov    0x10(%rdx),%rbx
+    0.00 :   1eee4:  mov    0x8(%rdx),%rcx
+         : 97    for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   1eee8:  add    $0x28,%rdx
+         : 99    registers[i.dst]  = registers[i.src0] / registers[i.src1];
+    0.00 :   1eeec:  movsd  (%rdi,%rbx,8),%xmm0
+    0.00 :   1eef1:  mov    -0x10(%rdx),%rbx
+    0.00 :   1eef5:  divsd  (%rdi,%rbx,8),%xmm0
+    0.00 :   1eefa:  movsd  %xmm0,(%rdi,%rcx,8)
+         : 104   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   1eeff:  cmp    %rdx,%r8
+    0.00 :   1ef02:  jne    1ee70 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x40>
+    0.00 :   1ef08:  jmp    1eea4 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x74>
+    0.00 :   1ef0a:  nopw   0x0(%rax,%rax,1)
+         : 109   registers[i.dst]  = registers[i.src0] * registers[i.src1];
+    0.00 :   1ef10:  mov    0x10(%rdx),%rbx
+    0.00 :   1ef14:  mov    0x8(%rdx),%rcx
+         : 112   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   1ef18:  add    $0x28,%rdx
+         : 114   registers[i.dst]  = registers[i.src0] * registers[i.src1];
+    0.00 :   1ef1c:  movsd  (%rdi,%rbx,8),%xmm0
+    0.00 :   1ef21:  mov    -0x10(%rdx),%rbx
+    0.00 :   1ef25:  mulsd  (%rdi,%rbx,8),%xmm0
+    0.00 :   1ef2a:  movsd  %xmm0,(%rdi,%rcx,8)
+         : 119   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   1ef2f:  cmp    %rdx,%r8
+    0.00 :   1ef32:  jne    1ee70 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x40>
+    0.00 :   1ef38:  jmp    1eea4 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x74>
+    0.00 :   1ef3d:  nopl   (%rax)
+         : 124   registers[i.dst]  = registers[i.src0] - registers[i.src1];
+    0.17 :   1ef40:  mov    0x10(%rdx),%rbx
+    0.00 :   1ef44:  mov    0x8(%rdx),%rcx
+         : 127   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   1ef48:  add    $0x28,%rdx
+         : 129   registers[i.dst]  = registers[i.src0] - registers[i.src1];
+    2.93 :   1ef4c:  movsd  (%rdi,%rbx,8),%xmm0
+    0.32 :   1ef51:  mov    -0x10(%rdx),%rbx
+    0.00 :   1ef55:  subsd  (%rdi,%rbx,8),%xmm0
+   12.59 :   1ef5a:  movsd  %xmm0,(%rdi,%rcx,8)
+         : 134   for (const Instruction& i: blueprint.getInstructions()) {
+    3.60 :   1ef5f:  cmp    %rdx,%r8
+    0.00 :   1ef62:  jne    1ee70 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x40>
+    0.00 :   1ef68:  jmp    1eea4 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x74>
+    0.00 :   1ef6d:  nopl   (%rax)
+         : 139   registers[i.dst]  = registers[i.src0] + registers[i.src1];
+    0.00 :   1ef70:  mov    0x10(%rdx),%rbx
+    0.00 :   1ef74:  mov    0x8(%rdx),%rcx
+         : 142   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   1ef78:  add    $0x28,%rdx
+         : 144   registers[i.dst]  = registers[i.src0] + registers[i.src1];
+    0.00 :   1ef7c:  movsd  (%rdi,%rbx,8),%xmm0
+    0.00 :   1ef81:  mov    -0x10(%rdx),%rbx
+    0.00 :   1ef85:  addsd  (%rdi,%rbx,8),%xmm0
+    0.00 :   1ef8a:  movsd  %xmm0,(%rdi,%rcx,8)
+         : 149   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   1ef8f:  cmp    %rdx,%r8
+    0.00 :   1ef92:  jne    1ee70 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x40>
+    0.00 :   1ef98:  jmp    1eea4 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x74>
+    0.00 :   1ef9d:  nopl   (%rax)
+         : 154   const InputField field = static_cast<InputField>(i.auxiliary);
+    0.04 :   1efa0:  mov    0x20(%rdx),%rcx
+         : 156   if (field == InputField::Bid) {
+    6.74 :   1efa4:  test   %rcx,%rcx
+    0.00 :   1efa7:  jne    1efd0 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x1a0>
+    5.40 :   1efa9:  mov    0x8(%rdx),%rcx
+         : 160   registers[i.dst] = record.bid;
+    0.00 :   1efad:  movsd  (%r11),%xmm0
+         : 162   for (const Instruction& i: blueprint.getInstructions()) {
+    0.16 :   1efb2:  add    $0x28,%rdx
+         : 164   registers[i.dst] = record.bid;
+    0.00 :   1efb6:  movsd  %xmm0,(%rdi,%rcx,8)
+         : 166   for (const Instruction& i: blueprint.getInstructions()) {
+    5.22 :   1efbb:  cmp    %rdx,%r8
+    0.00 :   1efbe:  jne    1ee70 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x40>
+    0.00 :   1efc4:  jmp    1eea4 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x74>
+    0.00 :   1efc9:  nopl   0x0(%rax)
+         : 171   else if (field == InputField::Ask) {
+    0.00 :   1efd0:  cmp    $0x1,%rcx
+    0.00 :   1efd4:  jne    1ee9b <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x6b>
+    0.00 :   1efda:  mov    0x8(%rdx),%rcx
+         : 175   registers[i.dst] = record.ask;
+    0.08 :   1efde:  movsd  0x8(%r11),%xmm0
+         : 177   for (const Instruction& i: blueprint.getInstructions()) {
+    3.37 :   1efe4:  add    $0x28,%rdx
+         : 179   registers[i.dst] = record.ask;
+    0.00 :   1efe8:  movsd  %xmm0,(%rdi,%rcx,8)
+         : 181   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   1efed:  cmp    %rdx,%r8
+    0.00 :   1eff0:  jne    1ee70 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x40>
+    0.00 :   1eff6:  jmp    1eea4 <faststreamcompute::BytecodeExecutor::execute(faststreamcompute::QuoteRecord const&)+0x74>
+    0.00 :   1effb:  nopl   0x0(%rax,%rax,1)
+         : 186   return outputs;
+    0.00 :   1f000:  add    $0x68,%rax
+         : 188   }
+    0.00 :   1f004:  ret

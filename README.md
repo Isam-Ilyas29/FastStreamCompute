@@ -2,13 +2,33 @@
 
 FastStreamCompute is a C++ 20 engine that prepares a numerical computation once and runs it repeatedly over input records. The goal is to get a reusable engine closer to the speed of specialised native C++, while keeping it able to run different supported expressions without changing the executor.
 
-## Progress
+## Current Hypothesis
 
-The C++ builder, reference evaluator and scalar register-bytecode executor are working, with correctness tests registered in CTest. Google Benchmark compares midpoint, spread and relative spread against native C++ implementations, measuring execution and preparation separately.
-
-The native implementations are currently faster. Next, I will profile the gap and inspect the assembly to decide what to improve in the executor.
+**For Spread over 4,096 records, bytecode interpretation takes 16.9x longer, has 17.7x more instructions, executions 16.7x more instruction, but marginally has a 
+higher IPC. perf record had majority of samples (80%)  inside BytecodeExecutor::execute, there I performed perf annotate to view the assembly. Initially,
+I saw the native implementation using SIMD so investigated that. So, I used compiler flags "-fno-tree-loop-vectorize", "-fno-tree-slp-vectorize" and
+remeasured. I found that that in this instance bytecode interpretation was only 12.2x slower. With vectorisation enabled, native executes: 28.5% fewer instructions 
+and 12.8% fewer cycles. The faster version has lowe IPC so IPC alone does not mean a faster program. Surprisingly, native performance only improved by 1.17x and
+bytecode performance also improved by 1.14x. However, I believe that the biggest improvement can come from bytecode executing less instructions since it has a higher IPC
+than native and runs 17.7x more instructions than native. It calculates opcodes and operands every instruction for batchExecute even if it is the same, I should find a 
+way to reduce this control logic. Contiguous arithmetic loops should strive to enable automatic vectorisation.**
 
 ## Benchmarks
+
+### Linux perf
+
+Spread on an i7-8700T running Manjaro: 4,096 records per batch, 100,000 iterations, five runs. [Raw results](docs/benchmarks/spread_ipc.txt).
+
+| Measurement | Native | Bytecode |
+|---|---:|---:|
+| Median batch time / ns | 2,368 | 39,998 |
+| Mean instructions per run / billions | 2.065 | 36.471 |
+| Mean cycles per run / billions | 0.741 | 12.341 |
+| Instructions per cycle | 2.79 | 2.96 |
+
+The counters cover the whole process; batch times cover the benchmark loop. [perf report](docs/benchmarks/spread-bytecode-report.txt) puts 80.61% of cycle samples in `BytecodeExecutor::execute`. A [separate vectorisation check](docs/benchmarks/spread-vector-comparison.txt) found a 1.17x native speedup with vectorisation enabled, while bytecode remained 12.32x slower with it disabled in both builds. Next is measuring whether chunking reduces the repeated instruction handling.
+
+### Windows baseline
 
 These charts use [the 23 September 2026 Windows run](docs/benchmarks/bench_260923.json), with 20 repetitions per case. Lower times are better; each dot is a repetition average, not an individual record's latency. These are baseline measurements, not proof of performance on every workload.
 
