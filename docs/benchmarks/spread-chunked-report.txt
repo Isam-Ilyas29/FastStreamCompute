@@ -1,0 +1,41 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 100  of event 'cycles:u'
+# Event count (approx.): 1459748329
+#
+# Overhead  Command          Shared Object            Symbol                                                                                                                                                                                                 
+# ........  ...............  .......................  .......................................................................................................................................................................................................
+#
+    99.62%  faststreamcompu  faststreamcompute_bench  [.] faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)
+            |          
+            |--98.52%--execute (inlined)
+            |          BM_SpreadChunkedExecute (inlined)
+            |          Run (inlined)
+            |          RunInThread (inlined)
+            |          operator() (inlined)
+            |          RunThreads (inlined)
+            |          DoNIterations (inlined)
+            |          DoOneRepetition (inlined)
+            |          RunBenchmarks (inlined)
+            |          
+             --1.09%--min<long unsigned int> (inlined)
+                       execute (inlined)
+                       BM_SpreadChunkedExecute (inlined)
+                       Run (inlined)
+                       RunInThread (inlined)
+                       operator() (inlined)
+                       RunThreads (inlined)
+                       DoNIterations (inlined)
+                       DoOneRepetition (inlined)
+                       RunBenchmarks (inlined)
+
+     0.21%  faststreamcompu  faststreamcompute_bench  [.] faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)
+     0.17%  faststreamcompu  ld-linux-x86-64.so.2     [.] 0x0000000000016e70
+
+
+#
+# (Tip: Use --symfs <dir>[,layout] if your symbol files are in non-standard locations.)
+#

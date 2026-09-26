@@ -1,0 +1,1360 @@
+ Percent |	Source code & Disassembly of faststreamcompute_bench for cycles:u (98 samples, percent: local period)
+---------------------------------------------------------------------------------------------------------------------
+         :
+         :
+         :
+         : 3     Disassembly of section .text:
+         :
+         : 5     00000000000205a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)>:
+         : 6     }
+         :
+         : 8     scratch.resize(chunk_capacity * register_count);
+         : 9     }
+         :
+         : 11    void ChunkedBytecodeExecutor::execute(const std::vector<QuoteRecord>& records, std::span<double> output) {
+    0.00 :   205a0:  sub    $0x78,%rsp
+         : 13    /**  Returns the number of elements in the %vector.  */
+         : 14    _GLIBCXX_NODISCARD _GLIBCXX20_CONSTEXPR
+         : 15    size_type
+         : 16    size() const _GLIBCXX_NOEXCEPT
+         : 17    {
+         : 18    ptrdiff_t __dif = this->_M_impl._M_finish - this->_M_impl._M_start;
+    0.00 :   205a4:  mov    0x8(%rsi),%rax
+    0.00 :   205a8:  mov    %rbx,0x48(%rsp)
+    0.00 :   205ad:  mov    (%rsi),%rbx
+    0.00 :   205b0:  mov    %rdx,0x28(%rsp)
+    0.00 :   205b5:  sub    %rbx,%rax
+    0.00 :   205b8:  mov    %rbx,0x38(%rsp)
+    0.00 :   205bd:  mov    %rax,%r11
+    0.00 :   205c0:  sar    $0x4,%r11
+         : 27    if (records.size() != output.size()) {
+    0.00 :   205c4:  cmp    %rcx,%r11
+    0.00 :   205c7:  jne    9bf6 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>) [clone .cold]>
+    0.00 :   205cd:  mov    0x38(%rdi),%rdx
+    0.00 :   205d1:  sub    0x30(%rdi),%rdx
+         : 32    throw std::invalid_argument("batch size mismatch");
+         : 33    }
+         : 34    if (blueprint.getOutputNames().size() != 1) {
+    0.00 :   205d5:  cmp    $0x20,%rdx
+    0.00 :   205d9:  jne    9c73 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>) [clone .cold]+0x7d>
+         : 37    throw std::invalid_argument("chunked execution requires exactly one output");
+         : 38    }
+         :
+         : 40    std::size_t offset = 0;
+         : 41    while (offset < records.size()) {
+    0.00 :   205df:  test   %rax,%rax
+    0.00 :   205e2:  je     206dd <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x13d>
+         : 44    : _M_current() { }
+         :
+         : 46    __attribute__((__always_inline__))
+         : 47    explicit _GLIBCXX_CONSTEXPR
+         : 48    __normal_iterator(const _Iterator& __i) _GLIBCXX_NOEXCEPT
+         : 49    : _M_current(__i) { }
+    0.00 :   205e8:  mov    0x8(%rdi),%rax
+    0.00 :   205ec:  mov    %r12,0x58(%rsp)
+    0.00 :   205f1:  mov    %r13,0x60(%rsp)
+         : 53    _GLIBCXX_NODISCARD _GLIBCXX20_CONSTEXPR
+         : 54    reference
+         : 55    operator[](size_type __n) _GLIBCXX_NOEXCEPT
+         : 56    {
+         : 57    __glibcxx_requires_subscript(__n);
+         : 58    return *(this->_M_impl._M_start + __n);
+    0.00 :   205f6:  mov    0x58(%rdi),%rsi
+    0.00 :   205fa:  mov    %rax,(%rsp)
+         : 61    _GLIBCXX_NODISCARD _GLIBCXX20_CONSTEXPR
+         : 62    const_reference
+         : 63    operator[](size_type __n) const _GLIBCXX_NOEXCEPT
+         : 64    {
+         : 65    __glibcxx_requires_subscript(__n);
+         : 66    return *(this->_M_impl._M_start + __n);
+    0.00 :   205fe:  mov    0x18(%rdi),%rax
+    0.00 :   20602:  mov    %r15,0x70(%rsp)
+    0.00 :   20607:  mov    %rax,0x30(%rsp)
+         : 70    std::size_t offset = 0;
+    0.00 :   2060c:  movq   $0x0,0x10(%rsp)
+    0.00 :   20615:  mov    %rbp,0x50(%rsp)
+         : 73    min(const _Tp& __a, const _Tp& __b)
+         : 74    {
+         : 75    // concept requirements
+         : 76    __glibcxx_function_requires(_LessThanComparableConcept<_Tp>)
+         : 77    //return __b < __a ? __b : __a;
+         : 78    if (__b < __a)
+    0.00 :   2061a:  mov    0x50(%rdi),%rbp
+    0.00 :   2061e:  mov    %r14,0x68(%rsp)
+    0.00 :   20623:  mov    (%rdi),%r14
+         : 82    // The last chunk may contain fewer records than chunk_capacity.
+         : 83    const std::size_t count = std::min(chunk_capacity, records.size() - offset);
+         : 84    for (const Instruction& i: blueprint.getInstructions()) {
+         : 85    switch (i.op) {
+    0.00 :   20626:  lea    0x60d8f(%rip),%rdi        # 813bc <std::piecewise_construct+0x4ae>
+    0.00 :   2062d:  nopl   (%rax)
+         : 88    const std::size_t count = std::min(chunk_capacity, records.size() - offset);
+    1.09 :   20630:  mov    0x10(%rsp),%rbx
+    0.00 :   20635:  mov    %r11,%rcx
+    0.00 :   20638:  sub    %rbx,%rcx
+    1.10 :   2063b:  cmp    %rbp,%rcx
+    0.00 :   2063e:  cmova  %rbp,%rcx
+         : 94    for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20642:  cmp    %r14,(%rsp)
+    0.00 :   20646:  je     206b4 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x114>
+    0.00 :   20648:  lea    -0x1(%rcx),%rdx
+    0.00 :   2064c:  mov    %r14,0x18(%rsp)
+    0.00 :   20651:  mov    %r14,%rax
+    0.00 :   20654:  mov    %rdx,0x8(%rsp)
+    0.00 :   20659:  mov    0x28(%rsp),%rdx
+    0.00 :   2065e:  mov    %r11,0x20(%rsp)
+    0.00 :   20663:  lea    (%rdx,%rbx,8),%r8
+    0.00 :   20667:  nopw   0x0(%rax,%rax,1)
+         : 105   switch (i.op) {
+    0.28 :   20670:  cmpl   $0x7,(%rax)
+    1.10 :   20673:  ja     9c41 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>) [clone .cold]+0x4b>
+    0.00 :   20679:  mov    (%rax),%edx
+    0.00 :   2067b:  movslq (%rdi,%rdx,4),%rdx
+    1.64 :   2067f:  add    %rdi,%rdx
+    0.00 :   20682:  jmp    *%rdx
+    0.00 :   20684:  nopl   0x0(%rax)
+         : 113   case OpCode::NOP:
+         : 114   // No Operation
+         : 115   break;
+         : 116   case OpCode::LOAD_F64: {
+         : 117   const InputField field = static_cast<InputField>(i.auxiliary);
+    2.18 :   20688:  mov    0x20(%rax),%rdx
+         : 119   if (field == InputField::Bid) {
+    0.00 :   2068c:  test   %rdx,%rdx
+    0.00 :   2068f:  je     20cc0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x720>
+         : 122   for (std::size_t lane = 0; lane < count; ++lane) {
+         : 123   scratch[(i.dst * chunk_capacity) + lane] = records[offset + lane].bid;
+         : 124   }
+         : 125   }
+         : 126   else if (field == InputField::Ask) {
+    0.00 :   20695:  cmp    $0x1,%rdx
+    0.00 :   20699:  je     20be0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x640>
+    0.00 :   2069f:  nop
+         : 130   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   206a0:  add    $0x28,%rax
+    0.00 :   206a4:  cmp    %rax,(%rsp)
+    0.00 :   206a8:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   206aa:  mov    0x18(%rsp),%r14
+    0.00 :   206af:  mov    0x20(%rsp),%r11
+         : 136   throw std::logic_error("invalide operation type");
+         : 137   break;
+         : 138   }
+         : 139   }
+         : 140   // Outputs are saved; reuse the same scratch rows for the next chunk.
+         : 141   offset += count;
+    0.00 :   206b4:  add    %rcx,0x10(%rsp)
+         : 143   while (offset < records.size()) {
+    1.10 :   206b9:  cmp    %r11,0x10(%rsp)
+    0.00 :   206be:  jb     20630 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x90>
+    0.00 :   206c4:  mov    0x50(%rsp),%rbp
+    0.00 :   206c9:  mov    0x58(%rsp),%r12
+    0.00 :   206ce:  mov    0x60(%rsp),%r13
+    0.00 :   206d3:  mov    0x68(%rsp),%r14
+    0.00 :   206d8:  mov    0x70(%rsp),%r15
+         : 151   }
+         : 152   }
+    2.15 :   206dd:  mov    0x48(%rsp),%rbx
+    0.00 :   206e2:  add    $0x78,%rsp
+    0.00 :   206e6:  ret
+    0.00 :   206e7:  nopw   0x0(%rax,%rax,1)
+         : 157   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   206f0:  test   %rcx,%rcx
+    0.00 :   206f3:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+         : 160   output[offset + lane] = scratch[(i.src0 * chunk_capacity) + lane];
+    0.00 :   206f5:  mov    0x10(%rax),%r11
+    0.00 :   206f9:  imul   %rbp,%r11
+    0.00 :   206fd:  cmpq   $0x2,0x8(%rsp)
+    0.00 :   20703:  jbe    20ef0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x950>
+    0.00 :   20709:  lea    0x8(%rsi,%r11,8),%rdx
+    0.00 :   2070e:  cmp    %rdx,%r8
+    0.00 :   20711:  je     20ef0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x950>
+    0.00 :   20717:  mov    %rcx,%rbx
+    0.00 :   2071a:  lea    (%rsi,%r11,8),%r10
+    0.00 :   2071e:  xor    %edx,%edx
+    0.00 :   20720:  shr    $1,%rbx
+    0.00 :   20723:  mov    %rbx,%r9
+    0.00 :   20726:  shl    $0x4,%r9
+    0.00 :   2072a:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   20735:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   20740:  movupd (%r10,%rdx,1),%xmm0
+    0.00 :   20746:  movups %xmm0,(%r8,%rdx,1)
+         : 178   for (std::size_t lane = 0; lane < count; ++lane) {
+   13.40 :   2074b:  add    $0x10,%rdx
+    0.00 :   2074f:  cmp    %rdx,%r9
+    0.00 :   20752:  jne    20740 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x1a0>
+    1.91 :   20754:  lea    (%rbx,%rbx,1),%rdx
+    1.10 :   20758:  cmp    %rdx,%rcx
+    0.00 :   2075b:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+         : 185   return *(this->_M_impl._M_start + __n);
+    0.00 :   20761:  add    %rdx,%r11
+         : 187   output[offset + lane] = scratch[(i.src0 * chunk_capacity) + lane];
+    0.00 :   20764:  mov    0x28(%rsp),%rbx
+         : 189   [[nodiscard]]
+         : 190   constexpr reference
+         : 191   operator[](size_type __idx) const noexcept
+         : 192   {
+         : 193   __glibcxx_assert(__idx < size());
+         : 194   return *(this->_M_ptr + __idx);
+    0.00 :   20769:  add    0x10(%rsp),%rdx
+         : 196   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   2076e:  add    $0x28,%rax
+         : 198   output[offset + lane] = scratch[(i.src0 * chunk_capacity) + lane];
+    0.00 :   20772:  movsd  (%rsi,%r11,8),%xmm0
+    0.00 :   20778:  movsd  %xmm0,(%rbx,%rdx,8)
+         : 201   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   2077d:  cmp    %rax,(%rsp)
+    0.00 :   20781:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20787:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   2078c:  nopl   0x0(%rax)
+         : 206   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20790:  test   %rcx,%rcx
+    0.00 :   20793:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+         : 209   scratch[(i.dst * chunk_capacity) + lane] = scratch[(i.src0 * chunk_capacity) + lane] / scratch[(i.src1 * chunk_capacity) + lane];
+    0.00 :   20799:  mov    0x10(%rax),%r15
+    0.00 :   2079d:  mov    0x18(%rax),%r14
+    0.00 :   207a1:  mov    0x8(%rax),%r12
+    0.00 :   207a5:  imul   %rbp,%r15
+    0.00 :   207a9:  imul   %rbp,%r14
+    0.00 :   207ad:  imul   %rbp,%r12
+    0.00 :   207b1:  cmp    $0x1,%rcx
+    0.00 :   207b5:  je     20da0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x800>
+    0.00 :   207bb:  lea    -0x1(%r12),%rdx
+    0.00 :   207c0:  mov    %rdx,%r9
+    0.00 :   207c3:  sub    %r15,%r9
+    0.00 :   207c6:  shl    $0x3,%r9
+    0.00 :   207ca:  je     20da0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x800>
+    0.00 :   207d0:  sub    %r14,%rdx
+    0.00 :   207d3:  shl    $0x3,%rdx
+    0.00 :   207d7:  je     20da0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x800>
+    0.00 :   207dd:  mov    %rcx,%r13
+    0.00 :   207e0:  lea    (%rsi,%r15,8),%rbx
+    0.00 :   207e4:  lea    (%rsi,%r14,8),%r11
+    0.00 :   207e8:  xor    %edx,%edx
+    0.00 :   207ea:  shr    $1,%r13
+    0.00 :   207ed:  lea    (%rsi,%r12,8),%r10
+    0.00 :   207f1:  mov    %r13,%r9
+    0.00 :   207f4:  shl    $0x4,%r9
+    0.00 :   207f8:  nopl   0x0(%rax,%rax,1)
+    0.00 :   20800:  movupd (%rbx,%rdx,1),%xmm0
+    0.00 :   20805:  movupd (%r11,%rdx,1),%xmm4
+    0.00 :   2080b:  divpd  %xmm4,%xmm0
+    0.00 :   2080f:  movups %xmm0,(%r10,%rdx,1)
+         : 239   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20814:  add    $0x10,%rdx
+    0.00 :   20818:  cmp    %r9,%rdx
+    0.00 :   2081b:  jne    20800 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x260>
+    0.00 :   2081d:  add    %r13,%r13
+    0.00 :   20820:  cmp    %r13,%rcx
+    0.00 :   20823:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+    0.00 :   20829:  add    %r13,%r12
+    0.00 :   2082c:  add    %r13,%r15
+    0.00 :   2082f:  add    %r14,%r13
+         : 249   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20832:  add    $0x28,%rax
+         : 251   scratch[(i.dst * chunk_capacity) + lane] = scratch[(i.src0 * chunk_capacity) + lane] / scratch[(i.src1 * chunk_capacity) + lane];
+    0.00 :   20836:  movsd  (%rsi,%r15,8),%xmm0
+    0.00 :   2083c:  divsd  (%rsi,%r13,8),%xmm0
+    0.00 :   20842:  movsd  %xmm0,(%rsi,%r12,8)
+         : 255   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20848:  cmp    %rax,(%rsp)
+    0.00 :   2084c:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20852:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   20857:  nopw   0x0(%rax,%rax,1)
+         : 260   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20860:  test   %rcx,%rcx
+    0.00 :   20863:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+         : 263   scratch[(i.dst * chunk_capacity) + lane] = scratch[(i.src0 * chunk_capacity) + lane] * scratch[(i.src1 * chunk_capacity) + lane];
+    0.00 :   20869:  mov    0x10(%rax),%r15
+    0.00 :   2086d:  mov    0x18(%rax),%r14
+    0.00 :   20871:  mov    0x8(%rax),%r12
+    0.00 :   20875:  imul   %rbp,%r15
+    0.00 :   20879:  imul   %rbp,%r14
+    0.00 :   2087d:  imul   %rbp,%r12
+    0.00 :   20881:  cmpq   $0x1,0x8(%rsp)
+    0.00 :   20887:  jbe    20e90 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x8f0>
+    0.00 :   2088d:  lea    -0x1(%r12),%rdx
+    0.00 :   20892:  mov    %rdx,%r9
+    0.00 :   20895:  sub    %r15,%r9
+    0.00 :   20898:  shl    $0x3,%r9
+    0.00 :   2089c:  je     20e90 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x8f0>
+    0.00 :   208a2:  sub    %r14,%rdx
+    0.00 :   208a5:  shl    $0x3,%rdx
+    0.00 :   208a9:  je     20e90 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x8f0>
+    0.00 :   208af:  mov    %rcx,%r13
+    0.00 :   208b2:  lea    (%rsi,%r15,8),%rbx
+    0.00 :   208b6:  lea    (%rsi,%r14,8),%r11
+    0.00 :   208ba:  xor    %edx,%edx
+    0.00 :   208bc:  shr    $1,%r13
+    0.00 :   208bf:  lea    (%rsi,%r12,8),%r10
+    0.00 :   208c3:  mov    %r13,%r9
+    0.00 :   208c6:  shl    $0x4,%r9
+    0.00 :   208ca:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   208d5:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   208e0:  movupd (%rbx,%rdx,1),%xmm0
+    0.00 :   208e5:  movupd (%r11,%rdx,1),%xmm3
+    0.00 :   208eb:  mulpd  %xmm3,%xmm0
+    0.00 :   208ef:  movups %xmm0,(%r10,%rdx,1)
+         : 294   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   208f4:  add    $0x10,%rdx
+    0.00 :   208f8:  cmp    %r9,%rdx
+    0.00 :   208fb:  jne    208e0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x340>
+    0.00 :   208fd:  add    %r13,%r13
+    0.00 :   20900:  cmp    %r13,%rcx
+    0.00 :   20903:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+    0.00 :   20909:  add    %r13,%r12
+    0.00 :   2090c:  add    %r13,%r15
+    0.00 :   2090f:  add    %r14,%r13
+         : 304   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20912:  add    $0x28,%rax
+         : 306   scratch[(i.dst * chunk_capacity) + lane] = scratch[(i.src0 * chunk_capacity) + lane] * scratch[(i.src1 * chunk_capacity) + lane];
+    0.00 :   20916:  movsd  (%rsi,%r15,8),%xmm0
+    0.00 :   2091c:  mulsd  (%rsi,%r13,8),%xmm0
+    0.00 :   20922:  movsd  %xmm0,(%rsi,%r12,8)
+         : 310   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20928:  cmp    %rax,(%rsp)
+    0.00 :   2092c:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20932:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   20937:  nopw   0x0(%rax,%rax,1)
+         : 315   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20940:  test   %rcx,%rcx
+    0.00 :   20943:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+         : 318   scratch[(i.dst * chunk_capacity) + lane] = scratch[(i.src0 * chunk_capacity) + lane] - scratch[(i.src1 * chunk_capacity) + lane];
+    0.00 :   20949:  mov    0x10(%rax),%r15
+    0.00 :   2094d:  mov    0x18(%rax),%r14
+    0.00 :   20951:  mov    0x8(%rax),%r12
+    0.00 :   20955:  imul   %rbp,%r15
+    0.00 :   20959:  imul   %rbp,%r14
+    0.00 :   2095d:  imul   %rbp,%r12
+    0.00 :   20961:  cmpq   $0x1,0x8(%rsp)
+    0.00 :   20967:  jbe    20df0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x850>
+    0.00 :   2096d:  lea    -0x1(%r12),%rdx
+    0.00 :   20972:  mov    %rdx,%r9
+    0.00 :   20975:  sub    %r15,%r9
+    0.00 :   20978:  shl    $0x3,%r9
+    0.00 :   2097c:  je     20df0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x850>
+    0.00 :   20982:  sub    %r14,%rdx
+    0.00 :   20985:  shl    $0x3,%rdx
+    0.00 :   20989:  je     20df0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x850>
+    0.00 :   2098f:  mov    %rcx,%r13
+    0.00 :   20992:  lea    (%rsi,%r15,8),%rbx
+    0.00 :   20996:  lea    (%rsi,%r14,8),%r11
+    0.00 :   2099a:  xor    %edx,%edx
+    0.00 :   2099c:  shr    $1,%r13
+    0.00 :   2099f:  lea    (%rsi,%r12,8),%r10
+    0.00 :   209a3:  mov    %r13,%r9
+    0.00 :   209a6:  shl    $0x4,%r9
+    0.00 :   209aa:  data16 cs nopw 0x0(%rax,%rax,1)
+    1.08 :   209b5:  data16 cs nopw 0x0(%rax,%rax,1)
+    4.28 :   209c0:  movupd (%rbx,%rdx,1),%xmm0
+    1.10 :   209c5:  movupd (%r11,%rdx,1),%xmm2
+    7.58 :   209cb:  subpd  %xmm2,%xmm0
+    0.00 :   209cf:  movups %xmm0,(%r10,%rdx,1)
+         : 349   for (std::size_t lane = 0; lane < count; ++lane) {
+    4.33 :   209d4:  add    $0x10,%rdx
+    0.00 :   209d8:  cmp    %rdx,%r9
+    0.00 :   209db:  jne    209c0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x420>
+    0.00 :   209dd:  add    %r13,%r13
+    0.00 :   209e0:  cmp    %r13,%rcx
+    0.00 :   209e3:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+    0.00 :   209e9:  add    %r13,%r12
+    0.00 :   209ec:  add    %r13,%r15
+    0.00 :   209ef:  add    %r14,%r13
+         : 359   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   209f2:  add    $0x28,%rax
+         : 361   scratch[(i.dst * chunk_capacity) + lane] = scratch[(i.src0 * chunk_capacity) + lane] - scratch[(i.src1 * chunk_capacity) + lane];
+    0.00 :   209f6:  movsd  (%rsi,%r15,8),%xmm0
+    0.00 :   209fc:  subsd  (%rsi,%r13,8),%xmm0
+    0.00 :   20a02:  movsd  %xmm0,(%rsi,%r12,8)
+         : 365   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20a08:  cmp    %rax,(%rsp)
+    0.00 :   20a0c:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20a12:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   20a17:  nopw   0x0(%rax,%rax,1)
+         : 370   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20a20:  test   %rcx,%rcx
+    0.00 :   20a23:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+         : 373   scratch[(i.dst * chunk_capacity) + lane] = scratch[(i.src0 * chunk_capacity) + lane] + scratch[(i.src1 * chunk_capacity) + lane];
+    0.00 :   20a29:  mov    0x10(%rax),%r15
+    0.00 :   20a2d:  mov    0x18(%rax),%r14
+    0.00 :   20a31:  mov    0x8(%rax),%r12
+    0.00 :   20a35:  imul   %rbp,%r15
+    0.00 :   20a39:  imul   %rbp,%r14
+    0.00 :   20a3d:  imul   %rbp,%r12
+    0.00 :   20a41:  cmpq   $0x1,0x8(%rsp)
+    0.00 :   20a47:  jbe    20f30 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x990>
+    0.00 :   20a4d:  lea    -0x1(%r12),%rdx
+    0.00 :   20a52:  mov    %rdx,%r9
+    0.00 :   20a55:  sub    %r15,%r9
+    0.00 :   20a58:  shl    $0x3,%r9
+    0.00 :   20a5c:  je     20f30 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x990>
+    0.00 :   20a62:  sub    %r14,%rdx
+    0.00 :   20a65:  shl    $0x3,%rdx
+    0.00 :   20a69:  je     20f30 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x990>
+    0.00 :   20a6f:  mov    %rcx,%r13
+    0.00 :   20a72:  lea    (%rsi,%r15,8),%rbx
+    0.00 :   20a76:  lea    (%rsi,%r14,8),%r11
+    0.00 :   20a7a:  xor    %edx,%edx
+    0.00 :   20a7c:  shr    $1,%r13
+    0.00 :   20a7f:  lea    (%rsi,%r12,8),%r10
+    0.00 :   20a83:  mov    %r13,%r9
+    0.00 :   20a86:  shl    $0x4,%r9
+    0.00 :   20a8a:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   20a95:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   20aa0:  movupd (%rbx,%rdx,1),%xmm0
+    0.00 :   20aa5:  movupd (%r11,%rdx,1),%xmm1
+    0.00 :   20aab:  addpd  %xmm1,%xmm0
+    0.00 :   20aaf:  movups %xmm0,(%r10,%rdx,1)
+         : 404   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20ab4:  add    $0x10,%rdx
+    0.00 :   20ab8:  cmp    %r9,%rdx
+    0.00 :   20abb:  jne    20aa0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x500>
+    0.00 :   20abd:  add    %r13,%r13
+    0.00 :   20ac0:  cmp    %r13,%rcx
+    0.00 :   20ac3:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+    0.00 :   20ac9:  add    %r13,%r12
+    0.00 :   20acc:  add    %r13,%r15
+    0.00 :   20acf:  add    %r14,%r13
+         : 414   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20ad2:  add    $0x28,%rax
+         : 416   scratch[(i.dst * chunk_capacity) + lane] = scratch[(i.src0 * chunk_capacity) + lane] + scratch[(i.src1 * chunk_capacity) + lane];
+    0.00 :   20ad6:  movsd  (%rsi,%r15,8),%xmm0
+    0.00 :   20adc:  addsd  (%rsi,%r13,8),%xmm0
+    0.00 :   20ae2:  movsd  %xmm0,(%rsi,%r12,8)
+         : 420   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20ae8:  cmp    %rax,(%rsp)
+    0.00 :   20aec:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20af2:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   20af7:  nopw   0x0(%rax,%rax,1)
+         : 425   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20b00:  test   %rcx,%rcx
+    0.00 :   20b03:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+         : 428   scratch[(i.dst * chunk_capacity) + lane] = blueprint.getConstants()[i.auxiliary];
+    0.00 :   20b09:  mov    0x8(%rax),%r11
+         : 430   return *(this->_M_impl._M_start + __n);
+    0.00 :   20b0d:  mov    0x20(%rax),%rbx
+    0.00 :   20b11:  imul   %rbp,%r11
+    0.00 :   20b15:  lea    0x0(,%rbx,8),%r9
+    0.00 :   20b1d:  mov    0x30(%rsp),%rbx
+    0.00 :   20b22:  lea    (%rbx,%r9,1),%r10
+    0.00 :   20b26:  lea    0x0(,%r11,8),%rdx
+    0.00 :   20b2e:  lea    (%r11,%rcx,1),%r12
+    0.00 :   20b32:  cmpq   $0x2,0x8(%rsp)
+    0.00 :   20b38:  jbe    20e50 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x8b0>
+    0.00 :   20b3e:  lea    (%r11,%rcx,1),%r12
+    0.00 :   20b42:  lea    (%rsi,%rdx,1),%rbx
+    0.00 :   20b46:  lea    (%rsi,%r12,8),%r13
+    0.00 :   20b4a:  cmp    %r13,%r10
+    0.00 :   20b4d:  jae    20b62 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x5c2>
+    0.00 :   20b4f:  mov    0x30(%rsp),%r15
+    0.00 :   20b54:  lea    0x8(%r15,%r9,1),%r9
+    0.00 :   20b59:  cmp    %r9,%rbx
+    0.00 :   20b5c:  jb     20e50 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x8b0>
+    0.00 :   20b62:  mov    %rcx,%r9
+    0.00 :   20b65:  movsd  (%r10),%xmm0
+    0.00 :   20b6a:  mov    %rbx,%rdx
+    0.00 :   20b6d:  shr    $1,%r9
+    0.00 :   20b70:  mov    %r9,%r13
+    0.00 :   20b73:  unpcklpd %xmm0,%xmm0
+    0.00 :   20b77:  shl    $0x4,%r13
+    0.00 :   20b7b:  lea    (%rbx,%r13,1),%r12
+    0.00 :   20b7f:  and    $0x10,%r13d
+    0.00 :   20b83:  je     20ba0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x600>
+         : 459   __glibcxx_requires_subscript(__n);
+    0.00 :   20b85:  add    $0x10,%rdx
+    0.00 :   20b89:  movups %xmm0,(%rbx)
+         : 462   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20b8c:  cmp    %r12,%rdx
+    0.00 :   20b8f:  je     20bb0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x610>
+    0.00 :   20b91:  nopl   0x0(%rax)
+    0.00 :   20b95:  data16 cs nopw 0x0(%rax,%rax,1)
+         : 467   scratch[(i.dst * chunk_capacity) + lane] = blueprint.getConstants()[i.auxiliary];
+    0.00 :   20ba0:  movups %xmm0,(%rdx)
+    0.00 :   20ba3:  add    $0x20,%rdx
+    0.00 :   20ba7:  movups %xmm0,-0x10(%rdx)
+         : 471   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20bab:  cmp    %r12,%rdx
+    0.00 :   20bae:  jne    20ba0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x600>
+    0.00 :   20bb0:  add    %r9,%r9
+    0.00 :   20bb3:  cmp    %r9,%rcx
+    0.00 :   20bb6:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+         : 477   scratch[(i.dst * chunk_capacity) + lane] = blueprint.getConstants()[i.auxiliary];
+    0.00 :   20bbc:  movsd  (%r10),%xmm0
+         : 479   return *(this->_M_impl._M_start + __n);
+    0.00 :   20bc1:  add    %r11,%r9
+         : 481   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20bc4:  add    $0x28,%rax
+         : 483   scratch[(i.dst * chunk_capacity) + lane] = blueprint.getConstants()[i.auxiliary];
+    0.00 :   20bc8:  movsd  %xmm0,(%rsi,%r9,8)
+         : 485   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20bce:  cmp    %rax,(%rsp)
+    0.00 :   20bd2:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20bd8:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   20bdd:  nopl   (%rax)
+         : 490   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20be0:  test   %rcx,%rcx
+    0.00 :   20be3:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+         : 493   scratch[(i.dst * chunk_capacity) + lane] = records[offset + lane].ask;
+    0.00 :   20be9:  mov    0x8(%rax),%rbx
+    0.00 :   20bed:  imul   %rbp,%rbx
+    0.00 :   20bf1:  lea    0x0(,%rbx,8),%rdx
+    0.00 :   20bf9:  lea    (%rbx,%rcx,1),%r12
+    0.00 :   20bfd:  cmpq   $0x7,0x8(%rsp)
+    0.00 :   20c03:  jbe    20fea <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xa4a>
+    0.00 :   20c09:  mov    0x10(%rsp),%r15
+    0.00 :   20c0e:  mov    0x38(%rsp),%r14
+    0.00 :   20c13:  lea    (%rbx,%rcx,1),%r12
+    0.00 :   20c17:  lea    (%rsi,%rdx,1),%r10
+    0.00 :   20c1b:  lea    (%rsi,%r12,8),%r11
+    0.00 :   20c1f:  mov    %r15,%r9
+    0.00 :   20c22:  shl    $0x4,%r9
+    0.00 :   20c26:  lea    0x8(%r14,%r9,1),%r9
+    0.00 :   20c2b:  cmp    %r11,%r9
+    0.00 :   20c2e:  jae    20c44 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x6a4>
+    0.00 :   20c30:  lea    (%rcx,%r15,1),%r11
+    0.00 :   20c34:  shl    $0x4,%r11
+    0.00 :   20c38:  add    %r14,%r11
+    0.00 :   20c3b:  cmp    %r11,%r10
+    0.00 :   20c3e:  jb     20fea <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xa4a>
+    0.00 :   20c44:  cmp    $0x1,%rcx
+    0.00 :   20c48:  je     2104a <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xaaa>
+    0.00 :   20c4e:  mov    %rcx,%r12
+    0.00 :   20c51:  xor    %edx,%edx
+    0.00 :   20c53:  shr    $1,%r12
+    0.00 :   20c56:  mov    %r12,%r11
+    0.00 :   20c59:  shl    $0x4,%r11
+    0.00 :   20c5d:  nopl   (%rax)
+    2.19 :   20c60:  movupd (%r9,%rdx,2),%xmm6
+    7.44 :   20c66:  movhpd 0x10(%r9,%rdx,2),%xmm6
+    6.38 :   20c6d:  movups %xmm6,(%r10,%rdx,1)
+         : 526   for (std::size_t lane = 0; lane < count; ++lane) {
+    7.73 :   20c72:  add    $0x10,%rdx
+    0.00 :   20c76:  cmp    %r11,%rdx
+    0.00 :   20c79:  jne    20c60 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x6c0>
+    0.00 :   20c7b:  add    %r12,%r12
+    0.00 :   20c7e:  cmp    %r12,%rcx
+    0.00 :   20c81:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+         : 533   return *(this->_M_impl._M_start + __n);
+    0.00 :   20c87:  mov    0x10(%rsp),%rdx
+         : 535   scratch[(i.dst * chunk_capacity) + lane] = records[offset + lane].ask;
+    0.00 :   20c8c:  mov    0x38(%rsp),%r15
+         : 537   return *(this->_M_impl._M_start + __n);
+    0.00 :   20c91:  add    %r12,%rbx
+         : 539   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20c94:  add    $0x28,%rax
+         : 541   return *(this->_M_impl._M_start + __n);
+    0.00 :   20c98:  add    %r12,%rdx
+         : 543   scratch[(i.dst * chunk_capacity) + lane] = records[offset + lane].ask;
+    0.00 :   20c9b:  shl    $0x4,%rdx
+    0.00 :   20c9f:  movsd  0x8(%r15,%rdx,1),%xmm0
+    0.00 :   20ca6:  movsd  %xmm0,(%rsi,%rbx,8)
+         : 547   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20cab:  cmp    %rax,(%rsp)
+    0.00 :   20caf:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20cb5:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   20cba:  nopw   0x0(%rax,%rax,1)
+         : 552   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20cc0:  test   %rcx,%rcx
+    0.00 :   20cc3:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+         : 555   scratch[(i.dst * chunk_capacity) + lane] = records[offset + lane].bid;
+    0.00 :   20cc9:  mov    0x8(%rax),%rbx
+    0.00 :   20ccd:  imul   %rbp,%rbx
+    0.00 :   20cd1:  lea    0x0(,%rbx,8),%r10
+    0.00 :   20cd9:  lea    (%rbx,%rcx,1),%r12
+    0.00 :   20cdd:  cmpq   $0x7,0x8(%rsp)
+    0.00 :   20ce3:  jbe    20f8c <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x9ec>
+    0.00 :   20ce9:  mov    0x10(%rsp),%r15
+    0.00 :   20cee:  mov    0x38(%rsp),%r14
+    0.00 :   20cf3:  lea    (%rsi,%r10,1),%r11
+    0.00 :   20cf7:  lea    (%rcx,%r15,1),%r12
+    0.00 :   20cfb:  mov    %r15,%r9
+    0.00 :   20cfe:  shl    $0x4,%r12
+    0.00 :   20d02:  shl    $0x4,%r9
+    0.00 :   20d06:  lea    -0x8(%r14,%r12,1),%r12
+    0.00 :   20d0b:  add    %r14,%r9
+    0.00 :   20d0e:  cmp    %r12,%r11
+    0.00 :   20d11:  jae    20d24 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x784>
+    0.00 :   20d13:  lea    (%rbx,%rcx,1),%r12
+    0.00 :   20d17:  lea    (%rsi,%r12,8),%r13
+    0.00 :   20d1b:  cmp    %r13,%r9
+    0.00 :   20d1e:  jb     20f8c <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x9ec>
+    0.00 :   20d24:  cmp    $0x1,%rcx
+    0.00 :   20d28:  je     20d68 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x7c8>
+    0.00 :   20d2a:  mov    %rcx,%r12
+    0.00 :   20d2d:  shr    $1,%r12
+    0.00 :   20d30:  mov    %r12,%r10
+    0.00 :   20d33:  shl    $0x4,%r10
+    0.00 :   20d37:  nopw   0x0(%rax,%rax,1)
+    3.21 :   20d40:  movupd (%r9,%rdx,2),%xmm5
+    5.39 :   20d46:  movhpd 0x10(%r9,%rdx,2),%xmm5
+   11.82 :   20d4d:  movups %xmm5,(%r11,%rdx,1)
+         : 587   for (std::size_t lane = 0; lane < count; ++lane) {
+    7.98 :   20d52:  add    $0x10,%rdx
+    2.46 :   20d56:  cmp    %rdx,%r10
+    0.00 :   20d59:  jne    20d40 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x7a0>
+    0.00 :   20d5b:  lea    (%r12,%r12,1),%rdx
+    0.00 :   20d5f:  cmp    %rdx,%rcx
+    0.00 :   20d62:  je     206a0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x100>
+    0.00 :   20d68:  mov    0x10(%rsp),%r15
+         : 595   return *(this->_M_impl._M_start + __n);
+    0.00 :   20d6d:  add    %rdx,%rbx
+         : 597   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20d70:  add    $0x28,%rax
+         : 599   return *(this->_M_impl._M_start + __n);
+    0.00 :   20d74:  lea    (%r15,%rdx,1),%r9
+         : 601   scratch[(i.dst * chunk_capacity) + lane] = records[offset + lane].bid;
+    0.00 :   20d78:  mov    0x38(%rsp),%r15
+    0.00 :   20d7d:  shl    $0x4,%r9
+    0.00 :   20d81:  movsd  (%r15,%r9,1),%xmm0
+    0.00 :   20d87:  movsd  %xmm0,(%rsi,%rbx,8)
+         : 606   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20d8c:  cmp    %rax,(%rsp)
+    0.00 :   20d90:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20d96:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   20d9b:  nopl   0x0(%rax,%rax,1)
+    0.00 :   20da0:  lea    (%r15,%rcx,1),%r9
+    0.00 :   20da4:  lea    (%rsi,%r15,8),%rdx
+         : 613   scratch[(i.dst * chunk_capacity) + lane] = scratch[(i.src0 * chunk_capacity) + lane] / scratch[(i.src1 * chunk_capacity) + lane];
+    0.00 :   20da8:  sub    %r15,%r12
+    0.00 :   20dab:  sub    %r15,%r14
+    0.00 :   20dae:  lea    (%rsi,%r9,8),%r9
+    0.00 :   20db2:  nopl   (%rax)
+    0.00 :   20db5:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   20dc0:  movsd  (%rdx),%xmm0
+    0.00 :   20dc4:  divsd  (%rdx,%r14,8),%xmm0
+    0.00 :   20dca:  movsd  %xmm0,(%rdx,%r12,8)
+         : 622   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20dd0:  add    $0x8,%rdx
+    0.00 :   20dd4:  cmp    %r9,%rdx
+    0.00 :   20dd7:  jne    20dc0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x820>
+         : 626   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20dd9:  add    $0x28,%rax
+    0.00 :   20ddd:  cmp    %rax,(%rsp)
+    0.00 :   20de1:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20de7:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   20dec:  nopl   0x0(%rax)
+    0.00 :   20df0:  lea    (%r15,%rcx,1),%r9
+    0.00 :   20df4:  lea    (%rsi,%r15,8),%rdx
+         : 634   scratch[(i.dst * chunk_capacity) + lane] = scratch[(i.src0 * chunk_capacity) + lane] - scratch[(i.src1 * chunk_capacity) + lane];
+    0.00 :   20df8:  sub    %r15,%r12
+    0.00 :   20dfb:  sub    %r15,%r14
+    0.00 :   20dfe:  lea    (%rsi,%r9,8),%r9
+    0.00 :   20e02:  nopl   0x0(%rax,%rax,1)
+    0.00 :   20e0a:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   20e15:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   20e20:  movsd  (%rdx),%xmm0
+    0.00 :   20e24:  subsd  (%rdx,%r14,8),%xmm0
+    0.00 :   20e2a:  movsd  %xmm0,(%rdx,%r12,8)
+         : 644   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20e30:  add    $0x8,%rdx
+    0.00 :   20e34:  cmp    %rdx,%r9
+    0.00 :   20e37:  jne    20e20 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x880>
+         : 648   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20e39:  add    $0x28,%rax
+    0.00 :   20e3d:  cmp    %rax,(%rsp)
+    0.00 :   20e41:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20e47:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   20e4c:  nopl   0x0(%rax)
+    0.00 :   20e50:  add    %rsi,%rdx
+    0.00 :   20e53:  lea    (%rsi,%r12,8),%r9
+    0.00 :   20e57:  nopw   0x0(%rax,%rax,1)
+         : 657   scratch[(i.dst * chunk_capacity) + lane] = blueprint.getConstants()[i.auxiliary];
+    0.00 :   20e60:  movsd  (%r10),%xmm0
+         : 659   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20e65:  add    $0x8,%rdx
+         : 661   scratch[(i.dst * chunk_capacity) + lane] = blueprint.getConstants()[i.auxiliary];
+    0.00 :   20e69:  movsd  %xmm0,-0x8(%rdx)
+         : 663   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20e6e:  cmp    %rdx,%r9
+    0.00 :   20e71:  jne    20e60 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x8c0>
+         : 666   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20e73:  add    $0x28,%rax
+    0.00 :   20e77:  cmp    %rax,(%rsp)
+    0.00 :   20e7b:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20e81:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   20e86:  cs nopw 0x0(%rax,%rax,1)
+    0.00 :   20e90:  lea    (%r15,%rcx,1),%r9
+    0.00 :   20e94:  lea    (%rsi,%r15,8),%rdx
+         : 674   scratch[(i.dst * chunk_capacity) + lane] = scratch[(i.src0 * chunk_capacity) + lane] * scratch[(i.src1 * chunk_capacity) + lane];
+    0.00 :   20e98:  sub    %r15,%r12
+    0.00 :   20e9b:  sub    %r15,%r14
+    0.00 :   20e9e:  lea    (%rsi,%r9,8),%r9
+    0.00 :   20ea2:  nopl   0x0(%rax,%rax,1)
+    0.00 :   20eaa:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   20eb5:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   20ec0:  movsd  (%rdx,%r14,8),%xmm0
+    0.00 :   20ec6:  mulsd  (%rdx),%xmm0
+    0.00 :   20eca:  movsd  %xmm0,(%rdx,%r12,8)
+         : 684   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20ed0:  add    $0x8,%rdx
+    0.00 :   20ed4:  cmp    %r9,%rdx
+    0.00 :   20ed7:  jne    20ec0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x920>
+         : 688   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20ed9:  add    $0x28,%rax
+    0.00 :   20edd:  cmp    %rax,(%rsp)
+    0.00 :   20ee1:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20ee7:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   20eec:  nopl   0x0(%rax)
+    0.00 :   20ef0:  lea    (%rsi,%r11,8),%r9
+         : 695   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20ef4:  xor    %edx,%edx
+    0.00 :   20ef6:  cs nopw 0x0(%rax,%rax,1)
+         : 698   output[offset + lane] = scratch[(i.src0 * chunk_capacity) + lane];
+    0.00 :   20f00:  movsd  (%r9,%rdx,8),%xmm0
+    0.00 :   20f06:  movsd  %xmm0,(%r8,%rdx,8)
+         : 701   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20f0c:  add    $0x1,%rdx
+    0.00 :   20f10:  cmp    %rdx,%rcx
+    0.00 :   20f13:  jne    20f00 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x960>
+         : 705   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20f15:  add    $0x28,%rax
+    0.00 :   20f19:  cmp    %rax,(%rsp)
+    0.00 :   20f1d:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20f23:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   20f28:  nopl   0x0(%rax,%rax,1)
+    0.00 :   20f30:  lea    (%r15,%rcx,1),%r9
+    0.00 :   20f34:  lea    (%rsi,%r15,8),%rdx
+         : 713   scratch[(i.dst * chunk_capacity) + lane] = scratch[(i.src0 * chunk_capacity) + lane] + scratch[(i.src1 * chunk_capacity) + lane];
+    0.00 :   20f38:  sub    %r15,%r12
+    0.00 :   20f3b:  sub    %r15,%r14
+    0.00 :   20f3e:  lea    (%rsi,%r9,8),%r9
+    0.00 :   20f42:  nopl   0x0(%rax,%rax,1)
+    0.00 :   20f4a:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   20f55:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   20f60:  movsd  (%rdx,%r14,8),%xmm0
+    0.00 :   20f66:  addsd  (%rdx),%xmm0
+    0.00 :   20f6a:  movsd  %xmm0,(%rdx,%r12,8)
+         : 723   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20f70:  add    $0x8,%rdx
+    0.00 :   20f74:  cmp    %r9,%rdx
+    0.00 :   20f77:  jne    20f60 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x9c0>
+         : 727   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20f79:  add    $0x28,%rax
+    0.00 :   20f7d:  cmp    %rax,(%rsp)
+    0.00 :   20f81:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20f87:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   20f8c:  mov    0x10(%rsp),%rdx
+    0.00 :   20f91:  add    %rsi,%r10
+    0.00 :   20f94:  lea    (%rsi,%r12,8),%r9
+    0.00 :   20f98:  shl    $0x4,%rdx
+    0.00 :   20f9c:  add    0x38(%rsp),%rdx
+    0.00 :   20fa1:  nopw   0x0(%rax,%rax,1)
+    0.00 :   20faa:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   20fb5:  data16 cs nopw 0x0(%rax,%rax,1)
+         : 740   scratch[(i.dst * chunk_capacity) + lane] = records[offset + lane].bid;
+    0.00 :   20fc0:  movsd  (%rdx),%xmm0
+         : 742   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20fc4:  add    $0x8,%r10
+    0.00 :   20fc8:  add    $0x10,%rdx
+         : 745   scratch[(i.dst * chunk_capacity) + lane] = records[offset + lane].bid;
+    0.00 :   20fcc:  movsd  %xmm0,-0x8(%r10)
+         : 747   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   20fd2:  cmp    %r9,%r10
+    0.00 :   20fd5:  jne    20fc0 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xa20>
+         : 750   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   20fd7:  add    $0x28,%rax
+    0.00 :   20fdb:  cmp    %rax,(%rsp)
+    0.00 :   20fdf:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   20fe5:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+    0.00 :   20fea:  mov    0x10(%rsp),%r9
+    0.00 :   20fef:  mov    0x38(%rsp),%rbx
+    0.00 :   20ff4:  add    %rsi,%rdx
+    0.00 :   20ff7:  lea    (%rsi,%r12,8),%r10
+    0.00 :   20ffb:  shl    $0x4,%r9
+    0.00 :   20fff:  lea    0x8(%rbx,%r9,1),%r9
+    0.00 :   21004:  nopw   0x0(%rax,%rax,1)
+    0.00 :   2100a:  data16 cs nopw 0x0(%rax,%rax,1)
+    0.00 :   21015:  data16 cs nopw 0x0(%rax,%rax,1)
+         : 764   scratch[(i.dst * chunk_capacity) + lane] = records[offset + lane].ask;
+    0.00 :   21020:  movsd  (%r9),%xmm0
+         : 766   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   21025:  add    $0x8,%rdx
+    0.00 :   21029:  add    $0x10,%r9
+         : 769   scratch[(i.dst * chunk_capacity) + lane] = records[offset + lane].ask;
+    0.00 :   2102d:  movsd  %xmm0,-0x8(%rdx)
+         : 771   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   21032:  cmp    %r10,%rdx
+    0.00 :   21035:  jne    21020 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xa80>
+         : 774   for (const Instruction& i: blueprint.getInstructions()) {
+    0.00 :   21037:  add    $0x28,%rax
+    0.00 :   2103b:  cmp    %rax,(%rsp)
+    0.00 :   2103f:  jne    20670 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0xd0>
+    0.00 :   21045:  jmp    206aa <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x10a>
+         : 779   for (std::size_t lane = 0; lane < count; ++lane) {
+    0.00 :   2104a:  xor    %r12d,%r12d
+    0.00 :   2104d:  jmp    20c87 <faststreamcompute::ChunkedBytecodeExecutor::execute(std::vector<faststreamcompute::QuoteRecord, std::allocator<faststreamcompute::QuoteRecord> > const&, std::span<double, 18446744073709551615ul>)+0x6e7>
+ Percent |	Source code & Disassembly of faststreamcompute_bench for cycles:u (1 samples, percent: local period)
+--------------------------------------------------------------------------------------------------------------------
+         :
+         :
+         :
+         : 3     Disassembly of section .text:
+         :
+         : 5     000000000001e590 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)>:
+         : 6     #include <unordered_map>
+         : 7     #include <string>
+         :
+         :
+         : 10    namespace faststreamcompute {
+         : 11    std::unordered_map<std::string, double> referenceExecutor(const QuoteRecord& record, const Program& program) {
+    0.00 :   1e590:  sub    $0x58,%rsp
+         : 13    const _Hash&, const _Equal&, const allocator_type&,
+         : 14    false_type __uks);
+         :
+         : 16    public:
+         : 17    // Constructor, destructor, assignment, swap
+         : 18    _Hashtable() = default;
+    0.00 :   1e594:  lea    0x30(%rdi),%rax
+    0.00 :   1e598:  mov    %r12,0x38(%rsp)
+    0.00 :   1e59d:  mov    %rdi,%r12
+    0.00 :   1e5a0:  mov    %r13,0x40(%rsp)
+    0.00 :   1e5a5:  mov    %rsi,%r13
+    0.00 :   1e5a8:  mov    %rax,(%rdi)
+    0.00 :   1e5ab:  movq   $0x1,0x8(%rdi)
+         : 26    */
+         : 27    struct _Hash_node_base
+         : 28    {
+         : 29    _Hash_node_base* _M_nxt;
+         :
+         : 31    _Hash_node_base() noexcept : _M_nxt() { }
+    0.00 :   1e5b3:  movq   $0x0,0x10(%rdi)
+    0.00 :   1e5bb:  movq   $0x0,0x18(%rdi)
+         : 34    struct _Prime_rehash_policy
+         : 35    {
+         : 36    using __has_load_factor = true_type;
+         :
+         : 38    _Prime_rehash_policy(float __z = 1.0) noexcept
+         : 39    : _M_max_load_factor(__z), _M_next_resize(0) { }
+    0.00 :   1e5c3:  movl   $0x3f800000,0x20(%rdi)
+    0.00 :   1e5ca:  movq   $0x0,0x28(%rdi)
+    0.00 :   1e5d2:  movq   $0x0,0x30(%rdi)
+         : 43    std::unordered_map<std::string, double> results;
+         : 44    std::vector<double> values;
+         :
+         : 46    for (const Node& node : program.getNodes()) {
+    0.00 :   1e5da:  mov    %rdx,%rdi
+    0.00 :   1e5dd:  mov    %rax,(%rsp)
+    0.00 :   1e5e1:  call   1e580 <faststreamcompute::Program::getNodes() const>
+    0.00 :   1e5e6:  mov    %r14,0x48(%rsp)
+         : 51    : _M_current() { }
+         :
+         : 53    __attribute__((__always_inline__))
+         : 54    explicit _GLIBCXX_CONSTEXPR
+         : 55    __normal_iterator(const _Iterator& __i) _GLIBCXX_NOEXCEPT
+         : 56    : _M_current(__i) { }
+    0.00 :   1e5eb:  mov    0x8(%rax),%r14
+    0.00 :   1e5ef:  mov    %r15,0x50(%rsp)
+    0.00 :   1e5f4:  mov    (%rax),%r15
+    0.00 :   1e5f7:  cmp    %r15,%r14
+    0.00 :   1e5fa:  je     1e698 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x108>
+    0.00 :   1e600:  mov    %rbx,0x28(%rsp)
+         : 63    std::vector<double> values;
+    0.00 :   1e605:  xor    %edx,%edx
+    0.00 :   1e607:  xor    %ebx,%ebx
+    0.00 :   1e609:  mov    %rbp,0x30(%rsp)
+    0.00 :   1e60e:  xor    %ebp,%ebp
+         : 68    if (node.operation == Op::CONSTANT) {
+    0.00 :   1e610:  mov    0x28(%r15),%eax
+    0.00 :   1e614:  cmp    $0x2,%eax
+    0.00 :   1e617:  je     1e6b8 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x128>
+         : 72    values.push_back(node.value);
+         : 73    }
+         : 74    else if (node.operation == Op::INPUT) {
+    0.00 :   1e61d:  test   %eax,%eax
+    0.00 :   1e61f:  jne    1e6f0 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x160>
+         : 77    inline bool
+         : 78    operator==(const basic_string<_CharT, _Traits, _Alloc>& __lhs,
+         : 79    const _CharT* __rhs)
+         : 80    {
+         : 81    return __lhs.size() == _Traits::length(__rhs)
+         : 82    && !_Traits::compare(__lhs.data(), __rhs, __lhs.size());
+    0.00 :   1e625:  cmpq   $0x3,0x10(%r15)
+    0.00 :   1e62a:  jne    9807 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&) [clone .cold]+0x8a>
+         : 85    { return _M_dataplus._M_p; }
+    0.00 :   1e630:  mov    0x8(%r15),%rax
+         : 87    else if (lt(__s2[__i], __s1[__i]))
+         : 88    return 1;
+         : 89    return 0;
+         : 90    }
+         : 91    #endif
+         : 92    return __builtin_memcmp(__s1, __s2, __n);
+    0.00 :   1e634:  cmpw   $0x6962,(%rax)
+    0.00 :   1e639:  je     1e8f0 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x360>
+    0.00 :   1e63f:  cmpw   $0x7361,(%rax)
+    0.00 :   1e644:  jne    9807 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&) [clone .cold]+0x8a>
+    0.00 :   1e64a:  cmpb   $0x6b,0x2(%rax)
+    0.00 :   1e64e:  jne    9807 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&) [clone .cold]+0x8a>
+         : 99    */
+         : 100   _GLIBCXX20_CONSTEXPR
+         : 101   void
+         : 102   push_back(const value_type& __x)
+         : 103   {
+         : 104   if (this->_M_impl._M_finish != this->_M_impl._M_end_of_storage)
+    0.00 :   1e654:  cmp    %rdx,%rbx
+    0.00 :   1e657:  je     1ea48 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x4b8>
+         : 107   "types must not use any arguments to initialize the "
+         : 108   "array");
+         : 109   return ::new(__loc) _Tp[1]();
+         : 110   }
+         : 111   else
+         : 112   return ::new(__loc) _Tp(std::forward<_Args>(__args)...);
+    0.00 :   1e65d:  movsd  0x8(%r13),%xmm0
+         : 114   for (const Node& node : program.getNodes()) {
+    0.00 :   1e663:  add    $0x48,%r15
+         : 116   {
+         : 117   _GLIBCXX_ASAN_ANNOTATE_GROW(1);
+         : 118   _Alloc_traits::construct(this->_M_impl, this->_M_impl._M_finish,
+         : 119   __x);
+         : 120   ++this->_M_impl._M_finish;
+    0.00 :   1e667:  add    $0x8,%rdx
+    0.00 :   1e66b:  movsd  %xmm0,-0x8(%rdx)
+    0.00 :   1e670:  cmp    %r15,%r14
+    0.00 :   1e673:  jne    1e610 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x80>
+         : 125   if (__p)
+    0.00 :   1e675:  test   %rbp,%rbp
+    0.00 :   1e678:  je     1e6e2 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x152>
+    0.00 :   1e67a:  nopw   0x0(%rax,%rax,1)
+         : 129   ptrdiff_t __n = _M_impl._M_end_of_storage - _M_impl._M_start;
+    0.00 :   1e680:  sub    %rbp,%rbx
+         : 131   _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n),
+         : 132   std::align_val_t(alignof(_Tp)));
+         : 133   return;
+         : 134   }
+         : 135   #endif
+         : 136   _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n));
+    0.00 :   1e683:  mov    %rbp,%rdi
+    0.00 :   1e686:  mov    %rbx,%rsi
+    0.00 :   1e689:  call   7470 <operator delete(void*, unsigned long)@plt>
+         : 140   values.push_back(values[node.lhs]);
+         : 141   results[node.name] = values[node.id];
+         : 142   }
+         : 143   }
+         :
+         : 145   return results;
+    0.00 :   1e68e:  mov    0x28(%rsp),%rbx
+    0.00 :   1e693:  mov    0x30(%rsp),%rbp
+         : 148   }
+    0.00 :   1e698:  mov    %r12,%rax
+    0.00 :   1e69b:  mov    0x48(%rsp),%r14
+    0.00 :   1e6a0:  mov    0x50(%rsp),%r15
+    0.00 :   1e6a5:  mov    0x38(%rsp),%r12
+    0.00 :   1e6aa:  mov    0x40(%rsp),%r13
+    0.00 :   1e6af:  add    $0x58,%rsp
+    0.00 :   1e6b3:  ret
+    0.00 :   1e6b4:  nopl   0x0(%rax)
+         : 157   if (this->_M_impl._M_finish != this->_M_impl._M_end_of_storage)
+    0.00 :   1e6b8:  cmp    %rdx,%rbx
+    0.00 :   1e6bb:  je     1e7a0 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x210>
+    0.00 :   1e6c1:  movsd  0x30(%r15),%xmm0
+         : 161   ++this->_M_impl._M_finish;
+    0.00 :   1e6c7:  add    $0x8,%rdx
+    0.00 :   1e6cb:  movsd  %xmm0,-0x8(%rdx)
+         : 164   for (const Node& node : program.getNodes()) {
+    0.00 :   1e6d0:  add    $0x48,%r15
+    0.00 :   1e6d4:  cmp    %r15,%r14
+    0.00 :   1e6d7:  jne    1e610 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x80>
+         : 168   if (__p)
+    0.00 :   1e6dd:  test   %rbp,%rbp
+    0.00 :   1e6e0:  jne    1e680 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0xf0>
+    0.00 :   1e6e2:  mov    0x28(%rsp),%rbx
+    0.00 :   1e6e7:  mov    0x30(%rsp),%rbp
+    0.00 :   1e6ec:  jmp    1e698 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x108>
+    0.00 :   1e6ee:  xchg   %ax,%ax
+         : 175   else if (node.operation == Op::ADDITION || node.operation == Op::SUBTRACTION || node.operation == Op::MULTIPLICATION || node.operation == Op::DIVISION) {
+    0.00 :   1e6f0:  lea    -0x3(%rax),%esi
+    0.00 :   1e6f3:  cmp    $0x3,%esi
+    0.00 :   1e6f6:  ja     1e740 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x1b0>
+         : 179   return *(this->_M_impl._M_start + __n);
+    0.00 :   1e6f8:  mov    0x38(%r15),%rsi
+         : 181   double lhs = values[node.lhs];
+    0.00 :   1e6fc:  movsd  0x0(%rbp,%rsi,8),%xmm0
+    0.00 :   1e702:  mov    0x40(%r15),%rsi
+         : 184   double rhs = values[node.rhs];
+    0.00 :   1e706:  movsd  0x0(%rbp,%rsi,8),%xmm1
+         : 186   if (node.operation == Op::ADDITION) {
+    0.00 :   1e70c:  cmp    $0x3,%eax
+    0.00 :   1e70f:  je     1e958 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x3c8>
+         : 189   else if (node.operation == Op::SUBTRACTION) {
+    0.00 :   1e715:  cmp    $0x4,%eax
+    0.00 :   1e718:  je     1ea10 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x480>
+         : 192   else if (node.operation == Op::MULTIPLICATION) {
+    0.00 :   1e71e:  cmp    $0x5,%eax
+    0.00 :   1e721:  je     1e920 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x390>
+         : 195   values.push_back(lhs/rhs);
+    0.00 :   1e727:  divsd  %xmm1,%xmm0
+         : 197   void
+         : 198   #endif
+         : 199   vector<_Tp, _Alloc>::
+         : 200   emplace_back(_Args&&... __args)
+         : 201   {
+         : 202   if (this->_M_impl._M_finish != this->_M_impl._M_end_of_storage)
+    0.00 :   1e72b:  cmp    %rdx,%rbx
+    0.00 :   1e72e:  je     1e850 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x2c0>
+    0.00 :   1e734:  movsd  %xmm0,(%rdx)
+         : 206   {
+         : 207   _GLIBCXX_ASAN_ANNOTATE_GROW(1);
+         : 208   _Alloc_traits::construct(this->_M_impl, this->_M_impl._M_finish,
+         : 209   std::forward<_Args>(__args)...);
+         : 210   ++this->_M_impl._M_finish;
+    0.00 :   1e738:  add    $0x8,%rdx
+    0.00 :   1e73c:  jmp    1e6d0 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x140>
+    0.00 :   1e73e:  xchg   %ax,%ax
+         : 214   else if (node.operation == Op::OUTPUT) {
+    0.00 :   1e740:  cmp    $0x1,%eax
+    0.00 :   1e743:  jne    1e6d0 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x140>
+    0.00 :   1e745:  mov    0x38(%r15),%rax
+    0.00 :   1e749:  lea    0x0(%rbp,%rax,8),%rsi
+         : 219   if (this->_M_impl._M_finish != this->_M_impl._M_end_of_storage)
+    0.00 :   1e74e:  cmp    %rdx,%rbx
+    0.00 :   1e751:  je     1eabf <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x52f>
+    0.00 :   1e757:  movsd  (%rsi),%xmm0
+         : 223   ++this->_M_impl._M_finish;
+    0.00 :   1e75b:  add    $0x8,%rdx
+    0.00 :   1e75f:  movsd  %xmm0,-0x8(%rdx)
+         : 226   return *(this->_M_impl._M_start + __n);
+    0.00 :   1e764:  mov    (%r15),%rax
+         : 228   results[node.name] = values[node.id];
+    0.00 :   1e767:  lea    0x8(%r15),%rsi
+         : 230   *
+         : 231   *  Lookup requires constant time.
+         : 232   */
+         : 233   mapped_type&
+         : 234   operator[](const key_type& __k)
+         : 235   { return _M_h[__k]; }
+    0.00 :   1e76b:  mov    %r12,%rdi
+    0.00 :   1e76e:  mov    %rdx,0x10(%rsp)
+    0.00 :   1e773:  movsd  0x0(%rbp,%rax,8),%xmm0
+    0.00 :   1e779:  movsd  %xmm0,0x8(%rsp)
+    0.00 :   1e77f:  call   1ebc0 <std::__detail::_Map_base<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, double>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, double> >, std::__detail::_Select1st, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true>, true>::operator[](std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)>
+    0.00 :   1e784:  movsd  0x8(%rsp),%xmm0
+    0.00 :   1e78a:  mov    0x10(%rsp),%rdx
+    0.00 :   1e78f:  movsd  %xmm0,(%rax)
+    0.00 :   1e793:  jmp    1e6d0 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x140>
+    0.00 :   1e798:  nopl   0x0(%rax,%rax,1)
+         : 246   // Called by _M_fill_insert, _M_insert_aux etc.
+         : 247   _GLIBCXX20_CONSTEXPR
+         : 248   size_type
+         : 249   _M_check_len(size_type __n, const char* __s) const
+         : 250   {
+         : 251   if (max_size() - size() < __n)
+    0.00 :   1e7a0:  movabs $0xfffffffffffffff,%rax
+         : 253   ptrdiff_t __dif = this->_M_impl._M_finish - this->_M_impl._M_start;
+    0.00 :   1e7aa:  mov    %rbx,%rdx
+    0.00 :   1e7ad:  sub    %rbp,%rdx
+    0.00 :   1e7b0:  mov    %rdx,%rsi
+    0.00 :   1e7b3:  sar    $0x3,%rsi
+         : 258   if (max_size() - size() < __n)
+    0.00 :   1e7b7:  cmp    %rax,%rsi
+    0.00 :   1e7ba:  je     9849 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&) [clone .cold]+0xcc>
+         : 261   max(const _Tp& __a, const _Tp& __b)
+         : 262   {
+         : 263   // concept requirements
+         : 264   __glibcxx_function_requires(_LessThanComparableConcept<_Tp>)
+         : 265   //return  __a < __b ? __b : __a;
+         : 266   if (__a < __b)
+    0.00 :   1e7c0:  test   %rsi,%rsi
+    0.00 :   1e7c3:  mov    $0x1,%eax
+    0.00 :   1e7c8:  mov    %rdx,0x10(%rsp)
+    0.00 :   1e7cd:  cmovne %rsi,%rax
+         : 271   __throw_length_error(__N(__s));
+         :
+         : 273   const size_type __len = size() + (std::max)(size(), __n);
+    0.00 :   1e7d1:  add    %rsi,%rax
+         : 275   return (__len < size() || __len > max_size()) ? max_size() : __len;
+    0.00 :   1e7d4:  movabs $0xfffffffffffffff,%rsi
+    0.00 :   1e7de:  cmp    %rsi,%rax
+    0.00 :   1e7e1:  cmova  %rsi,%rax
+         : 279   return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp)));
+    0.00 :   1e7e5:  shl    $0x3,%rax
+    0.00 :   1e7e9:  mov    %rax,%rdi
+    0.00 :   1e7ec:  mov    %rax,0x8(%rsp)
+    0.00 :   1e7f1:  call   7460 <operator new(unsigned long)@plt>
+    0.00 :   1e7f6:  movsd  0x30(%r15),%xmm0
+    0.00 :   1e7fc:  mov    0x10(%rsp),%rdx
+    0.00 :   1e801:  mov    %rax,%r8
+    0.00 :   1e804:  movsd  %xmm0,(%rax,%rdx,1)
+         : 288   __relocate_a_1(_Tp* __first, _Tp* __last,
+         : 289   _Tp* __result,
+         : 290   [[__maybe_unused__]] allocator<_Up>& __alloc) noexcept
+         : 291   {
+         : 292   ptrdiff_t __count = __last - __first;
+         : 293   if (__count > 0)
+    0.00 :   1e809:  test   %rdx,%rdx
+    0.00 :   1e80c:  jne    1e8d0 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x340>
+         : 296   {
+         : 297   // Relocation cannot throw.
+         : 298   __new_finish = std::__relocate_a(__old_start, __old_finish,
+         : 299   __new_start,
+         : 300   _M_get_Tp_allocator());
+         : 301   ++__new_finish;
+    0.00 :   1e812:  lea    0x8(%r8,%rdx,1),%rdx
+         : 303   if (_M_storage)
+    0.00 :   1e817:  test   %rbp,%rbp
+    0.00 :   1e81a:  je     1e83e <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x2ae>
+         : 306   // New storage has been fully initialized, destroy the old elements.
+         : 307   __guard_elts._M_first = __old_start;
+         : 308   __guard_elts._M_last = __old_finish;
+         : 309   }
+         : 310   __guard._M_storage = __old_start;
+         : 311   __guard._M_len = this->_M_impl._M_end_of_storage - __old_start;
+    0.00 :   1e81c:  sub    %rbp,%rbx
+         : 313   _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n));
+    0.00 :   1e81f:  mov    %rbp,%rdi
+    0.00 :   1e822:  mov    %r8,0x18(%rsp)
+    0.00 :   1e827:  mov    %rbx,%rsi
+    0.00 :   1e82a:  mov    %rdx,0x10(%rsp)
+    0.00 :   1e82f:  call   7470 <operator delete(void*, unsigned long)@plt>
+    0.00 :   1e834:  mov    0x18(%rsp),%r8
+    0.00 :   1e839:  mov    0x10(%rsp),%rdx
+         : 321   // deallocate should be called before assignments to _M_impl,
+         : 322   // to avoid call-clobbering
+         :
+         : 324   this->_M_impl._M_start = __new_start;
+         : 325   this->_M_impl._M_finish = __new_finish;
+         : 326   this->_M_impl._M_end_of_storage = __new_start + __len;
+    0.00 :   1e83e:  mov    0x8(%rsp),%rbx
+         : 328   this->_M_impl._M_start = __new_start;
+    0.00 :   1e843:  mov    %r8,%rbp
+         : 330   this->_M_impl._M_end_of_storage = __new_start + __len;
+    0.00 :   1e846:  add    %r8,%rbx
+    0.00 :   1e849:  jmp    1e6d0 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x140>
+    0.00 :   1e84e:  xchg   %ax,%ax
+         : 334   if (max_size() - size() < __n)
+    0.00 :   1e850:  movabs $0xfffffffffffffff,%rax
+         : 336   ptrdiff_t __dif = this->_M_impl._M_finish - this->_M_impl._M_start;
+    0.00 :   1e85a:  mov    %rbx,%rdx
+    0.00 :   1e85d:  sub    %rbp,%rdx
+    0.00 :   1e860:  mov    %rdx,%rsi
+    0.00 :   1e863:  sar    $0x3,%rsi
+         : 341   if (max_size() - size() < __n)
+    0.00 :   1e867:  cmp    %rax,%rsi
+    0.00 :   1e86a:  je     977d <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&) [clone .cold]>
+    0.00 :   1e870:  test   %rsi,%rsi
+    0.00 :   1e873:  mov    $0x1,%eax
+    0.00 :   1e878:  mov    %rdx,0x18(%rsp)
+    0.00 :   1e87d:  cmovne %rsi,%rax
+    0.00 :   1e881:  movsd  %xmm0,0x10(%rsp)
+         : 349   const size_type __len = size() + (std::max)(size(), __n);
+    0.00 :   1e887:  add    %rsi,%rax
+         : 351   return (__len < size() || __len > max_size()) ? max_size() : __len;
+    0.00 :   1e88a:  movabs $0xfffffffffffffff,%rsi
+    0.00 :   1e894:  cmp    %rsi,%rax
+    0.00 :   1e897:  cmova  %rsi,%rax
+         : 355   return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp)));
+    0.00 :   1e89b:  shl    $0x3,%rax
+    0.00 :   1e89f:  mov    %rax,%rdi
+    0.00 :   1e8a2:  mov    %rax,0x8(%rsp)
+    0.00 :   1e8a7:  call   7460 <operator new(unsigned long)@plt>
+    0.00 :   1e8ac:  movsd  0x10(%rsp),%xmm0
+    0.00 :   1e8b2:  mov    0x18(%rsp),%rdx
+    0.00 :   1e8b7:  mov    %rax,%r8
+    0.00 :   1e8ba:  movsd  %xmm0,(%rax,%rdx,1)
+    0.00 :   1e8bf:  test   %rdx,%rdx
+    0.00 :   1e8c2:  je     1e812 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x282>
+         : 366   __gnu_cxx::__normal_iterator<_Tp*, void> __out(__result);
+         : 367   __out = std::__relocate_a_1(__first, __last, __out, __alloc);
+         : 368   return __out.base();
+         : 369   }
+         : 370   #endif
+         : 371   __builtin_memcpy(__result, __first, __count * sizeof(_Tp));
+    0.00 :   1e8c8:  mov    %rdx,0x10(%rsp)
+    0.00 :   1e8cd:  nopl   (%rax)
+    0.00 :   1e8d0:  mov    %r8,%rdi
+    0.00 :   1e8d3:  mov    %rbp,%rsi
+    0.00 :   1e8d6:  call   73d0 <memcpy@plt>
+    0.00 :   1e8db:  mov    0x10(%rsp),%rdx
+    0.00 :   1e8e0:  mov    %rax,%r8
+    0.00 :   1e8e3:  jmp    1e812 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x282>
+    0.00 :   1e8e8:  nopl   0x0(%rax,%rax,1)
+    0.00 :   1e8f0:  cmpb   $0x64,0x2(%rax)
+  100.00 :   1e8f4:  jne    1e63f <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0xaf>
+         : 383   if (this->_M_impl._M_finish != this->_M_impl._M_end_of_storage)
+    0.00 :   1e8fa:  cmp    %rdx,%rbx
+    0.00 :   1e8fd:  je     1e990 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x400>
+    0.00 :   1e903:  movsd  0x0(%r13),%xmm0
+         : 387   ++this->_M_impl._M_finish;
+    0.00 :   1e909:  add    $0x8,%rdx
+    0.00 :   1e90d:  movsd  %xmm0,-0x8(%rdx)
+    0.00 :   1e912:  jmp    1e6d0 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x140>
+    0.00 :   1e917:  nopw   0x0(%rax,%rax,1)
+         : 392   values.push_back(lhs*rhs);
+    0.00 :   1e920:  mulsd  %xmm1,%xmm0
+         : 394   if (this->_M_impl._M_finish != this->_M_impl._M_end_of_storage)
+    0.00 :   1e924:  cmp    %rdx,%rbx
+    0.00 :   1e927:  jne    1e734 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x1a4>
+         : 397   if (max_size() - size() < __n)
+    0.00 :   1e92d:  movabs $0xfffffffffffffff,%rax
+         : 399   ptrdiff_t __dif = this->_M_impl._M_finish - this->_M_impl._M_start;
+    0.00 :   1e937:  mov    %rbx,%rdx
+    0.00 :   1e93a:  sub    %rbp,%rdx
+    0.00 :   1e93d:  mov    %rdx,%rsi
+    0.00 :   1e940:  sar    $0x3,%rsi
+         : 404   if (max_size() - size() < __n)
+    0.00 :   1e944:  cmp    %rax,%rsi
+    0.00 :   1e947:  jne    1e870 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x2e0>
+    0.00 :   1e94d:  jmp    9861 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&) [clone .cold]+0xe4>
+    0.00 :   1e952:  nopw   0x0(%rax,%rax,1)
+         : 409   values.push_back(lhs+rhs);
+    0.00 :   1e958:  addsd  %xmm1,%xmm0
+    0.00 :   1e95c:  cmp    %rdx,%rbx
+    0.00 :   1e95f:  jne    1e734 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x1a4>
+    0.00 :   1e965:  movabs $0xfffffffffffffff,%rax
+         : 414   ptrdiff_t __dif = this->_M_impl._M_finish - this->_M_impl._M_start;
+    0.00 :   1e96f:  mov    %rbx,%rdx
+    0.00 :   1e972:  sub    %rbp,%rdx
+    0.00 :   1e975:  mov    %rdx,%rsi
+    0.00 :   1e978:  sar    $0x3,%rsi
+         : 419   if (max_size() - size() < __n)
+    0.00 :   1e97c:  cmp    %rax,%rsi
+    0.00 :   1e97f:  jne    1e870 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x2e0>
+    0.00 :   1e985:  jmp    9855 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&) [clone .cold]+0xd8>
+    0.00 :   1e98a:  nopw   0x0(%rax,%rax,1)
+    0.00 :   1e990:  movabs $0xfffffffffffffff,%rax
+         : 425   ptrdiff_t __dif = this->_M_impl._M_finish - this->_M_impl._M_start;
+    0.00 :   1e99a:  mov    %rbx,%rdx
+    0.00 :   1e99d:  sub    %rbp,%rdx
+    0.00 :   1e9a0:  mov    %rdx,%rsi
+    0.00 :   1e9a3:  sar    $0x3,%rsi
+         : 430   if (max_size() - size() < __n)
+    0.00 :   1e9a7:  cmp    %rax,%rsi
+    0.00 :   1e9aa:  je     97fb <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&) [clone .cold]+0x7e>
+    0.00 :   1e9b0:  test   %rsi,%rsi
+    0.00 :   1e9b3:  mov    $0x1,%eax
+    0.00 :   1e9b8:  mov    %rdx,0x10(%rsp)
+    0.00 :   1e9bd:  cmovne %rsi,%rax
+         : 437   const size_type __len = size() + (std::max)(size(), __n);
+    0.00 :   1e9c1:  add    %rsi,%rax
+         : 439   return (__len < size() || __len > max_size()) ? max_size() : __len;
+    0.00 :   1e9c4:  movabs $0xfffffffffffffff,%rsi
+    0.00 :   1e9ce:  cmp    %rsi,%rax
+    0.00 :   1e9d1:  cmova  %rsi,%rax
+    0.00 :   1e9d5:  shl    $0x3,%rax
+    0.00 :   1e9d9:  mov    %rax,%rdi
+    0.00 :   1e9dc:  mov    %rax,0x8(%rsp)
+    0.00 :   1e9e1:  call   7460 <operator new(unsigned long)@plt>
+    0.00 :   1e9e6:  movsd  0x0(%r13),%xmm0
+    0.00 :   1e9ec:  mov    0x10(%rsp),%rdx
+    0.00 :   1e9f1:  mov    %rax,%r8
+    0.00 :   1e9f4:  movsd  %xmm0,(%rax,%rdx,1)
+         : 451   if (__count > 0)
+    0.00 :   1e9f9:  test   %rdx,%rdx
+    0.00 :   1e9fc:  je     1e812 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x282>
+    0.00 :   1ea02:  jmp    1e8d0 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x340>
+    0.00 :   1ea07:  nopw   0x0(%rax,%rax,1)
+         : 456   values.push_back(lhs-rhs);
+    0.00 :   1ea10:  subsd  %xmm1,%xmm0
+    0.00 :   1ea14:  cmp    %rdx,%rbx
+    0.00 :   1ea17:  jne    1e734 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x1a4>
+         : 460   if (max_size() - size() < __n)
+    0.00 :   1ea1d:  movabs $0xfffffffffffffff,%rax
+         : 462   ptrdiff_t __dif = this->_M_impl._M_finish - this->_M_impl._M_start;
+    0.00 :   1ea27:  mov    %rbx,%rdx
+    0.00 :   1ea2a:  sub    %rbp,%rdx
+    0.00 :   1ea2d:  mov    %rdx,%rsi
+    0.00 :   1ea30:  sar    $0x3,%rsi
+         : 467   if (max_size() - size() < __n)
+    0.00 :   1ea34:  cmp    %rax,%rsi
+    0.00 :   1ea37:  jne    1e870 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x2e0>
+    0.00 :   1ea3d:  jmp    9885 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&) [clone .cold]+0x108>
+    0.00 :   1ea42:  nopw   0x0(%rax,%rax,1)
+    0.00 :   1ea48:  movabs $0xfffffffffffffff,%rax
+         : 473   ptrdiff_t __dif = this->_M_impl._M_finish - this->_M_impl._M_start;
+    0.00 :   1ea52:  mov    %rbx,%rdx
+    0.00 :   1ea55:  sub    %rbp,%rdx
+    0.00 :   1ea58:  mov    %rdx,%rsi
+    0.00 :   1ea5b:  sar    $0x3,%rsi
+         : 478   if (max_size() - size() < __n)
+    0.00 :   1ea5f:  cmp    %rax,%rsi
+    0.00 :   1ea62:  je     986d <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&) [clone .cold]+0xf0>
+    0.00 :   1ea68:  test   %rsi,%rsi
+    0.00 :   1ea6b:  mov    $0x1,%eax
+    0.00 :   1ea70:  mov    %rdx,0x10(%rsp)
+    0.00 :   1ea75:  cmovne %rsi,%rax
+         : 485   const size_type __len = size() + (std::max)(size(), __n);
+    0.00 :   1ea79:  add    %rsi,%rax
+         : 487   return (__len < size() || __len > max_size()) ? max_size() : __len;
+    0.00 :   1ea7c:  movabs $0xfffffffffffffff,%rsi
+    0.00 :   1ea86:  cmp    %rsi,%rax
+    0.00 :   1ea89:  cmova  %rsi,%rax
+    0.00 :   1ea8d:  shl    $0x3,%rax
+    0.00 :   1ea91:  mov    %rax,%rdi
+    0.00 :   1ea94:  mov    %rax,0x8(%rsp)
+    0.00 :   1ea99:  call   7460 <operator new(unsigned long)@plt>
+    0.00 :   1ea9e:  movsd  0x8(%r13),%xmm0
+    0.00 :   1eaa4:  mov    0x10(%rsp),%rdx
+    0.00 :   1eaa9:  mov    %rax,%r8
+    0.00 :   1eaac:  movsd  %xmm0,(%rax,%rdx,1)
+    0.00 :   1eab1:  test   %rdx,%rdx
+    0.00 :   1eab4:  je     1e812 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x282>
+    0.00 :   1eaba:  jmp    1e8d0 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x340>
+         : 502   if (max_size() - size() < __n)
+    0.00 :   1eabf:  movabs $0xfffffffffffffff,%rax
+         : 504   ptrdiff_t __dif = this->_M_impl._M_finish - this->_M_impl._M_start;
+    0.00 :   1eac9:  mov    %rbx,%rdx
+    0.00 :   1eacc:  sub    %rbp,%rdx
+    0.00 :   1eacf:  mov    %rdx,%rdi
+    0.00 :   1ead2:  sar    $0x3,%rdi
+         : 509   if (max_size() - size() < __n)
+    0.00 :   1ead6:  cmp    %rax,%rdi
+    0.00 :   1ead9:  je     9879 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&) [clone .cold]+0xfc>
+    0.00 :   1eadf:  test   %rdi,%rdi
+    0.00 :   1eae2:  mov    $0x1,%eax
+    0.00 :   1eae7:  mov    %rdx,0x18(%rsp)
+    0.00 :   1eaec:  cmovne %rdi,%rax
+    0.00 :   1eaf0:  mov    %rsi,0x10(%rsp)
+         : 517   const size_type __len = size() + (std::max)(size(), __n);
+    0.00 :   1eaf5:  add    %rdi,%rax
+         : 519   return (__len < size() || __len > max_size()) ? max_size() : __len;
+    0.00 :   1eaf8:  movabs $0xfffffffffffffff,%rdi
+    0.00 :   1eb02:  cmp    %rdi,%rax
+    0.00 :   1eb05:  cmova  %rdi,%rax
+    0.00 :   1eb09:  shl    $0x3,%rax
+    0.00 :   1eb0d:  mov    %rax,%rdi
+    0.00 :   1eb10:  mov    %rax,0x8(%rsp)
+    0.00 :   1eb15:  call   7460 <operator new(unsigned long)@plt>
+    0.00 :   1eb1a:  mov    0x10(%rsp),%rsi
+    0.00 :   1eb1f:  mov    0x18(%rsp),%rdx
+    0.00 :   1eb24:  mov    %rax,%r8
+    0.00 :   1eb27:  movsd  (%rsi),%xmm0
+    0.00 :   1eb2b:  movsd  %xmm0,(%rax,%rdx,1)
+    0.00 :   1eb30:  test   %rdx,%rdx
+    0.00 :   1eb33:  jne    1eb71 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x5e1>
+         : 534   ++__new_finish;
+    0.00 :   1eb35:  lea    0x8(%r8,%rdx,1),%rdx
+         : 536   if (_M_storage)
+    0.00 :   1eb3a:  test   %rbp,%rbp
+    0.00 :   1eb3d:  je     1eb61 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x5d1>
+         : 539   __guard._M_len = this->_M_impl._M_end_of_storage - __old_start;
+    0.00 :   1eb3f:  sub    %rbp,%rbx
+         : 541   _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n));
+    0.00 :   1eb42:  mov    %rbp,%rdi
+    0.00 :   1eb45:  mov    %r8,0x18(%rsp)
+    0.00 :   1eb4a:  mov    %rbx,%rsi
+    0.00 :   1eb4d:  mov    %rdx,0x10(%rsp)
+    0.00 :   1eb52:  call   7470 <operator delete(void*, unsigned long)@plt>
+    0.00 :   1eb57:  mov    0x18(%rsp),%r8
+    0.00 :   1eb5c:  mov    0x10(%rsp),%rdx
+         : 549   this->_M_impl._M_end_of_storage = __new_start + __len;
+    0.00 :   1eb61:  mov    0x8(%rsp),%rbx
+         : 551   this->_M_impl._M_start = __new_start;
+    0.00 :   1eb66:  mov    %r8,%rbp
+         : 553   this->_M_impl._M_end_of_storage = __new_start + __len;
+    0.00 :   1eb69:  add    %r8,%rbx
+    0.00 :   1eb6c:  jmp    1e764 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x1d4>
+         : 556   __builtin_memcpy(__result, __first, __count * sizeof(_Tp));
+    0.00 :   1eb71:  mov    %rbp,%rsi
+    0.00 :   1eb74:  mov    %rax,%rdi
+    0.00 :   1eb77:  mov    %rdx,0x10(%rsp)
+    0.00 :   1eb7c:  call   73d0 <memcpy@plt>
+    0.00 :   1eb81:  mov    0x10(%rsp),%rdx
+    0.00 :   1eb86:  mov    %rax,%r8
+    0.00 :   1eb89:  jmp    1eb35 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&)+0x5a5>
+    0.00 :   1eb8b:  mov    %rbx,0x28(%rsp)
+    0.00 :   1eb90:  mov    %rax,%r13
+    0.00 :   1eb93:  mov    %rbp,0x30(%rsp)
+    0.00 :   1eb98:  mov    %r14,0x48(%rsp)
+    0.00 :   1eb9d:  mov    %r15,0x50(%rsp)
+    0.00 :   1eba2:  jmp    979f <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&) [clone .cold]+0x22>
+    0.00 :   1eba7:  jmp    9789 <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&) [clone .cold]+0xc>
+         : 571   if (__p)
+    0.00 :   1ebac:  mov    %rax,%r13
+    0.00 :   1ebaf:  jmp    978c <faststreamcompute::referenceExecutor[abi:cxx11](faststreamcompute::QuoteRecord const&, faststreamcompute::Program const&) [clone .cold]+0xf>

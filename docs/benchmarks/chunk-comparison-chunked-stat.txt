@@ -1,0 +1,10 @@
+# started on Sat Sep 26 17:56:50 2026
+
+
+ Performance counter stats for './build/vector-on/faststreamcompute_bench --benchmark_filter=^BM_SpreadChunkedExecute/4096/256/real_time$ --benchmark_min_time=100000x' (5 runs):
+
+     1,508,628,391      cycles:u                                                                ( +-  1.36% )
+     5,216,864,557      instructions:u                                                          ( +-  0.00% )
+
+       0.486234710 +- 0.005749592 seconds time elapsed  ( +-  1.18% )
+

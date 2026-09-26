@@ -1,0 +1,10 @@
+# started on Sat Sep 26 17:51:15 2026
+
+
+ Performance counter stats for './build/vector-on/faststreamcompute_bench --benchmark_filter=^BM_SpreadNative/4096/real_time$ --benchmark_min_time=100000x' (5 runs):
+
+       746,234,301      cycles:u                                                                ( +-  0.47% )
+     2,064,659,008      instructions:u                                                          ( +-  0.00% )
+
+       0.246521721 +- 0.001785648 seconds time elapsed  ( +-  0.72% )
+
