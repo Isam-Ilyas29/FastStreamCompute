@@ -1,0 +1,225 @@
+1. RUN SUMMARY
+
+Metric                           | Value         
+---------------------------------+---------------
+Benchmark cases / count          | 30            
+Raw repetition rows / count      | 600           
+Aggregate rows / count           | 120           
+Repetitions per case / count     | 20            
+Reported errors / count          | 0             
+Batch iterations / count         | 7,093,960     
+CreateDestroy iterations / count | 21,404,500    
+Processed records / count        | 67,147,202,560
+Measured elapsed total / s       | 84.567        
+Cases with CV >= 10% / count     | 5             
+
+Each repetition contains many benchmark iterations. One iteration processes one
+whole batch, or performs one creation/destruction lifecycle for CreateDestroy.
+Processed records count repeated passes over the same datasets, not unique data.
+Measured elapsed total sums iterations * real_time across raw samples; it excludes
+uncaptured calibration/setup and is not total program runtime. The CV >= 10%
+count is descriptive, not a universal pass/fail threshold.
+
+2. RECORDED ENVIRONMENT
+
+Property                      | Value                                                                                     
+------------------------------+-------------------------------------------------------------------------------------------
+Host                          | ISAM-LAPTOP                                                                               
+Executable                    | C:\Users\isami\Documents\FastStreamCompute\build\bench-release\faststreamcompute_bench.exe
+Logical CPUs / count          | 20                                                                                        
+Reported CPU frequency / MHz  | 2918                                                                                      
+Threads per benchmark / count | 1                                                                                         
+Google Benchmark version      | v1.9.5                                                                                    
+Benchmark library build       | release                                                                                   
+JSON schema version           | 1                                                                                         
+
+Reported MHz is metadata, not a trace of clock speeds during the run. The JSON
+does not store a source/executable hash, compiler flags, exact CPU model, or
+power/thermal/background-load conditions. Record these with future measurements.
+
+3. NATIVE AND BYTECODE EXECUTION COMPARISON
+
+Native function         | Bytecode function                | Batch size / records | Native median / ns per record | BytecodeExecute median / ns per record | Native throughput / million records per s | BytecodeExecute throughput / million records per s | BytecodeExecute / Native time ratio | BytecodeExecute / Native throughput / %
+------------------------+----------------------------------+----------------------+-------------------------------+----------------------------------------+-------------------------------------------+----------------------------------------------------+-------------------------------------+----------------------------------------
+BM_MidpointNative       | BM_MidpointBytecodeExecute       | 4,096                | 0.318                         | 5.367                                  | 3,143.0                                   | 186.3                                              | 16.87                               | 5.93                                   
+BM_MidpointNative       | BM_MidpointBytecodeExecute       | 65,536               | 0.378                         | 5.311                                  | 2,646.6                                   | 188.3                                              | 14.06                               | 7.11                                   
+BM_MidpointNative       | BM_MidpointBytecodeExecute       | 1,048,576            | 0.677                         | 5.406                                  | 1,477.5                                   | 185.0                                              | 7.99                                | 12.52                                  
+BM_SpreadNative         | BM_SpreadBytecodeExecute         | 4,096                | 0.316                         | 4.067                                  | 3,165.6                                   | 245.9                                              | 12.87                               | 7.77                                   
+BM_SpreadNative         | BM_SpreadBytecodeExecute         | 65,536               | 0.376                         | 4.092                                  | 2,661.7                                   | 244.4                                              | 10.89                               | 9.18                                   
+BM_SpreadNative         | BM_SpreadBytecodeExecute         | 1,048,576            | 0.698                         | 4.107                                  | 1,433.2                                   | 243.5                                              | 5.89                                | 16.99                                  
+BM_RelativeSpreadNative | BM_RelativeSpreadBytecodeExecute | 4,096                | 0.454                         | 5.690                                  | 2,201.8                                   | 175.8                                              | 12.53                               | 7.98                                   
+BM_RelativeSpreadNative | BM_RelativeSpreadBytecodeExecute | 65,536               | 0.457                         | 5.697                                  | 2,188.8                                   | 175.5                                              | 12.47                               | 8.02                                   
+BM_RelativeSpreadNative | BM_RelativeSpreadBytecodeExecute | 1,048,576            | 0.709                         | 5.919                                  | 1,411.0                                   | 168.9                                              | 8.35                                | 11.97                                  
+
+A time ratio of 10 means BytecodeExecute took ten times as long as Native.
+Time per record is batch time divided by batch size: an amortized throughput
+measure, not the latency of processing an isolated record.
+
+4. MIDPOINT - COMPLETE ELAPSED-TIME STATISTICS
+
+Function                                | Batch size / records | Median / ns   | Mean / ns     | Stddev / ns | IQR / ns    | CV / % | Minimum / ns  | Maximum / ns  | Repetitions / count | Iterations per repetition / count
+----------------------------------------+----------------------+---------------+---------------+-------------+-------------+--------+---------------+---------------+---------------------+----------------------------------
+BM_MidpointNative                       | 4,096                | 1,303.193     | 1,301.852     | 34.306      | 40.577      | 2.6    | 1,261.368     | 1,404.904     | 20                  | 105,641                          
+BM_MidpointNative                       | 65,536               | 24,762.288    | 25,002.788    | 999.760     | 1,392.024   | 4.0    | 23,341.256    | 27,185.550    | 20                  | 5,827                            
+BM_MidpointNative                       | 1,048,576            | 709,718.000   | 721,718.514   | 80,810.776  | 55,525.286  | 11.2   | 626,566.857   | 979,119.428   | 20                  | 175                              
+BM_MidpointBytecodeExecute              | 4,096                | 21,983.217    | 22,131.013    | 881.592     | 538.826     | 4.0    | 21,243.782    | 25,019.930    | 20                  | 6,578                            
+BM_MidpointBytecodeExecute              | 65,536               | 348,069.927   | 349,603.814   | 6,866.342   | 9,138.692   | 2.0    | 339,346.699   | 363,950.367   | 20                  | 409                              
+BM_MidpointBytecodeExecute              | 1,048,576            | 5,668,538.461 | 5,724,203.462 | 200,373.959 | 267,530.771 | 3.5    | 5,490,223.080 | 6,288,799.999 | 20                  | 26                               
+BM_MidpointBytecodeCreateExecuteDestroy | 4,096                | 22,835.611    | 22,909.670    | 336.755     | 587.658     | 1.5    | 22,403.224    | 23,592.354    | 20                  | 6,265                            
+BM_MidpointBytecodeCreateExecuteDestroy | 65,536               | 347,889.710   | 347,829.576   | 3,500.092   | 5,323.487   | 1.0    | 341,599.516   | 353,619.128   | 20                  | 413                              
+BM_MidpointBytecodeCreateExecuteDestroy | 1,048,576            | 5,720,513.461 | 5,739,426.538 | 169,104.565 | 200,408.650 | 2.9    | 5,486,800.000 | 6,192,507.692 | 20                  | 26                               
+BM_MidpointBytecodeCreateDestroy        | N/A                  | 409.408       | 426.876       | 77.453      | 14.920      | 18.1   | 397.764       | 753.514       | 20                  | 356,045                          
+
+5. SPREAD - COMPLETE ELAPSED-TIME STATISTICS
+
+Function                              | Batch size / records | Median / ns   | Mean / ns     | Stddev / ns | IQR / ns    | CV / % | Minimum / ns  | Maximum / ns  | Repetitions / count | Iterations per repetition / count
+--------------------------------------+----------------------+---------------+---------------+-------------+-------------+--------+---------------+---------------+---------------------+----------------------------------
+BM_SpreadNative                       | 4,096                | 1,293.909     | 1,300.688     | 31.964      | 55.157      | 2.5    | 1,263.969     | 1,366.636     | 20                  | 111,716                          
+BM_SpreadNative                       | 65,536               | 24,622.210    | 24,931.004    | 1,098.715   | 1,085.104   | 4.4    | 23,638.882    | 27,265.137    | 20                  | 5,797                            
+BM_SpreadNative                       | 1,048,576            | 731,649.211   | 739,278.105   | 57,017.955  | 44,270.131  | 7.7    | 638,956.316   | 872,124.736   | 20                  | 190                              
+BM_SpreadBytecodeExecute              | 4,096                | 16,657.699    | 16,707.160    | 390.092     | 210.400     | 2.3    | 16,221.391    | 18,141.219    | 20                  | 8,644                            
+BM_SpreadBytecodeExecute              | 65,536               | 268,156.250   | 268,913.909   | 6,662.551   | 8,275.047   | 2.5    | 260,091.231   | 284,967.351   | 20                  | 536                              
+BM_SpreadBytecodeExecute              | 1,048,576            | 4,306,478.124 | 4,350,021.250 | 128,482.159 | 148,897.657 | 3.0    | 4,199,303.123 | 4,631,490.625 | 20                  | 32                               
+BM_SpreadBytecodeCreateExecuteDestroy | 4,096                | 16,902.158    | 17,015.816    | 315.373     | 385.302     | 1.9    | 16,647.961    | 17,619.400    | 20                  | 7,969                            
+BM_SpreadBytecodeCreateExecuteDestroy | 65,536               | 269,481.726   | 270,906.828   | 7,873.995   | 6,864.008   | 2.9    | 261,852.505   | 293,597.588   | 20                  | 539                              
+BM_SpreadBytecodeCreateExecuteDestroy | 1,048,576            | 4,319,018.750 | 4,325,247.031 | 82,578.920  | 99,682.812  | 1.9    | 4,205,825.000 | 4,503,893.750 | 20                  | 32                               
+BM_SpreadBytecodeCreateDestroy        | N/A                  | 295.321       | 320.609       | 81.930      | 6.922       | 25.6   | 284.544       | 590.361       | 20                  | 268,056                          
+
+6. RELATIVESPREAD - COMPLETE ELAPSED-TIME STATISTICS
+
+Function                                      | Batch size / records | Median / ns   | Mean / ns     | Stddev / ns | IQR / ns    | CV / % | Minimum / ns  | Maximum / ns  | Repetitions / count | Iterations per repetition / count
+----------------------------------------------+----------------------+---------------+---------------+-------------+-------------+--------+---------------+---------------+---------------------+----------------------------------
+BM_RelativeSpreadNative                       | 4,096                | 1,860.289     | 1,873.311     | 42.548      | 26.578      | 2.3    | 1,805.686     | 1,974.672     | 20                  | 76,341                           
+BM_RelativeSpreadNative                       | 65,536               | 29,941.981    | 30,173.720    | 593.677     | 431.697     | 2.0    | 29,582.857    | 31,517.837    | 20                  | 4,614                            
+BM_RelativeSpreadNative                       | 1,048,576            | 743,119.730   | 730,144.919   | 54,251.581  | 83,322.838  | 7.4    | 647,364.865   | 825,588.649   | 20                  | 185                              
+BM_RelativeSpreadBytecodeExecute              | 4,096                | 23,304.501    | 23,356.375    | 263.692     | 286.528     | 1.1    | 22,968.235    | 23,951.394    | 20                  | 6,098                            
+BM_RelativeSpreadBytecodeExecute              | 65,536               | 373,377.792   | 373,751.210   | 4,106.704   | 3,777.992   | 1.1    | 368,516.489   | 385,814.628   | 20                  | 376                              
+BM_RelativeSpreadBytecodeExecute              | 1,048,576            | 6,206,845.652 | 6,403,039.565 | 827,887.801 | 301,642.388 | 12.9   | 5,867,486.956 | 9,830,626.087 | 20                  | 23                               
+BM_RelativeSpreadBytecodeCreateExecuteDestroy | 4,096                | 24,048.429    | 24,192.274    | 474.845     | 567.380     | 2.0    | 23,701.725    | 25,445.321    | 20                  | 5,856                            
+BM_RelativeSpreadBytecodeCreateExecuteDestroy | 65,536               | 376,973.361   | 375,839.932   | 3,784.478   | 5,607.719   | 1.0    | 369,227.596   | 384,470.492   | 20                  | 366                              
+BM_RelativeSpreadBytecodeCreateExecuteDestroy | 1,048,576            | 6,114,724.999 | 6,173,605.416 | 176,131.250 | 133,941.669 | 2.9    | 5,957,945.832 | 6,800,329.167 | 20                  | 24                               
+BM_RelativeSpreadBytecodeCreateDestroy        | N/A                  | 331.235       | 345.444       | 75.302      | 10.890      | 21.8   | 312.263       | 663.681       | 20                  | 446,124                          
+
+Sections 5-7 show time per iteration: one batch for functions with a batch size,
+or one creation/destruction lifecycle for CreateDestroy. Google Benchmark already
+divided by the iterations within each repetition. Do not divide by them again.
+
+7. ELAPSED AND CPU MEDIANS
+
+Function                                      | Batch size / records | Elapsed median / ns | CPU median / ns
+----------------------------------------------+----------------------+---------------------+----------------
+BM_MidpointNative                             | 4,096                | 1,303.193           | 1,331.159      
+BM_MidpointNative                             | 65,536               | 24,762.288          | 24,133.345     
+BM_MidpointNative                             | 1,048,576            | 709,718.000         | 714,285.714    
+BM_MidpointBytecodeExecute                    | 4,096                | 21,983.217          | 21,378.078     
+BM_MidpointBytecodeExecute                    | 65,536               | 348,069.927         | 343,826.406    
+BM_MidpointBytecodeExecute                    | 1,048,576            | 5,668,538.461       | 5,408,653.846  
+BM_MidpointBytecodeCreateExecuteDestroy       | 4,096                | 22,835.611          | 22,446.129     
+BM_MidpointBytecodeCreateExecuteDestroy       | 65,536               | 347,889.710         | 340,496.368    
+BM_MidpointBytecodeCreateExecuteDestroy       | 1,048,576            | 5,720,513.461       | 5,408,653.846  
+BM_MidpointBytecodeCreateDestroy              | N/A                  | 409.408             | 394.964        
+BM_SpreadNative                               | 4,096                | 1,293.909           | 1,258.772      
+BM_SpreadNative                               | 65,536               | 24,622.210          | 24,258.237     
+BM_SpreadNative                               | 1,048,576            | 731,649.211         | 740,131.579    
+BM_SpreadBytecodeExecute                      | 4,096                | 16,657.699          | 16,268.510     
+BM_SpreadBytecodeExecute                      | 65,536               | 268,156.250         | 262,360.075    
+BM_SpreadBytecodeExecute                      | 1,048,576            | 4,306,478.124       | 4,394,531.250  
+BM_SpreadBytecodeCreateExecuteDestroy         | 4,096                | 16,902.158          | 17,646.505     
+BM_SpreadBytecodeCreateExecuteDestroy         | 65,536               | 269,481.726         | 260,899.814    
+BM_SpreadBytecodeCreateExecuteDestroy         | 1,048,576            | 4,319,018.750       | 4,394,531.250  
+BM_SpreadBytecodeCreateDestroy                | N/A                  | 295.321             | 291.450        
+BM_RelativeSpreadNative                       | 4,096                | 1,860.289           | 1,842.064      
+BM_RelativeSpreadNative                       | 65,536               | 29,941.981          | 30,477.893     
+BM_RelativeSpreadNative                       | 1,048,576            | 743,119.730         | 675,675.676    
+BM_RelativeSpreadBytecodeExecute              | 4,096                | 23,304.501          | 23,060.840     
+BM_RelativeSpreadBytecodeExecute              | 65,536               | 373,377.792         | 374,002.660    
+BM_RelativeSpreadBytecodeExecute              | 1,048,576            | 6,206,845.652       | 6,114,130.435  
+BM_RelativeSpreadBytecodeCreateExecuteDestroy | 4,096                | 24,048.429          | 24,013.832     
+BM_RelativeSpreadBytecodeCreateExecuteDestroy | 65,536               | 376,973.361         | 384,221.311    
+BM_RelativeSpreadBytecodeCreateExecuteDestroy | 1,048,576            | 6,114,724.999       | 6,510,416.667  
+BM_RelativeSpreadBytecodeCreateDestroy        | N/A                  | 331.235             | 315.215        
+
+Elapsed time is primary because these benchmarks use UseRealTime(). CPU time is
+supplementary. Timer resolution and measurement differences mean these values
+should not be used to infer exact CPU utilization or processor stall causes.
+
+8. CACHE METADATA REPORTED BY GOOGLE BENCHMARK
+
+Cache          | Capacity / bytes | Capacity / KiB | Reported sharing / logical CPUs
+---------------+------------------+----------------+--------------------------------
+L1 Data        | 49,152           | 48             | 2                              
+L1 Instruction | 32,768           | 32             | 2                              
+L2 Unified     | 1,310,720        | 1,280          | 2                              
+L3 Unified     | 25,165,824       | 24,576         | 20                             
+
+9. INPUT AND OUTPUT MEMORY FOOTPRINT
+
+Batch size / records | Input / bytes | Output / bytes | Combined / bytes | Combined / KiB | Combined / MiB
+---------------------+---------------+----------------+------------------+----------------+---------------
+4,096                | 65,536        | 32,768         | 98,304           | 96             | 0.09375       
+65,536               | 1,048,576     | 524,288        | 1,572,864        | 1,536          | 1.50000       
+1,048,576            | 16,777,216    | 8,388,608      | 25,165,824       | 24,576         | 24.00000      
+
+Derived from two doubles per input record (16 bytes) and one double per output
+(8 bytes). Excludes reference-result arrays, executor registers, instructions,
+allocator metadata and other process memory. KiB = 1,024 bytes; MiB = 1,048,576
+bytes. The largest input/output footprint equals the reported 24 MiB L3 capacity.
+That does not prove the workload fits in cache or is limited by DRAM bandwidth.
+
+10. HOW TO READ THE STATISTICS
+
+Statistic                         | Meaning                                                                      
+----------------------------------+------------------------------------------------------------------------------
+Median / ns                       | Middle repetition result; primary typical-time comparison.                   
+Mean / ns                         | Arithmetic average of the repetition results.                                
+Stddev / ns                       | Sample standard deviation; spread of repetition results around their mean.   
+IQR / ns                          | 75th percentile minus 25th percentile; spread of the middle half of results. 
+CV / %                            | 100 * sample standard deviation / mean; variability relative to average time.
+Minimum / ns                      | Fastest observed repetition result; not a guaranteed achievable time.        
+Maximum / ns                      | Slowest observed repetition result; not a worst-case latency guarantee.      
+Iterations per repetition / count | Batch/lifecycle executions used to produce each repetition result.           
+Repetitions / count               | Independent reported samples of a benchmark case; 20 here.                   
+
+IQR uses inclusive linear-interpolated quartiles. Stddev uses the sample formula
+(divisor n - 1). Tables are rounded only for display; calculations use unrounded
+raw values. Google Benchmark aggregate CV rows store a fraction: 0.10 means 10%,
+even if their inherited time_unit field says ns.
+
+11. FORMULAS
+
+Derived quantity                        | Formula                                             
+----------------------------------------+-----------------------------------------------------
+Median time / ns per record             | Median elapsed batch time / batch size              
+Throughput / million records per s      | 1,000 * batch size / median elapsed batch time in ns
+BytecodeExecute / Native time ratio     | BytecodeExecute median / Native median              
+BytecodeExecute / Native throughput / % | 100 * Native median / BytecodeExecute median        
+
+12. MEASUREMENT BOUNDARIES
+
+Function suffix (all three formulas) | Work inside each timed iteration                                                       
+-------------------------------------+----------------------------------------------------------------------------------------
+Native                               | Execute the dedicated native formula over one batch.                                   
+BytecodeExecute                      | Execute one batch using an already prepared bytecode executor.                         
+BytecodeCreateDestroy                | Construct the execution blueprint and executor, then destroy them. No records executed.
+BytecodeCreateExecuteDestroy         | Construct the blueprint/executor, execute one batch, then destroy them.                
+
+The input Program, record dataset and external output buffer are prepared outside
+the timed loop where applicable. CreateDestroy has no batch-size argument because
+it does not process records. CreateExecuteDestroy directly measures the combined
+lifecycle; separately measured medians need not add exactly because execution
+conditions differ and measurements vary. A lower combined result is not proof
+that rebuilding the executor makes execution faster.
+
+13. FINDINGS AND NEXT STEPS
+
+Finding                                                                  | Interpretation / action                                                                     
+-------------------------------------------------------------------------+---------------------------------------------------------------------------------------------
+BytecodeExecute is slower than Native in all nine execution comparisons. | A substantial gap exists; timing alone does not identify its cause.                         
+5 of 30 cases have CV >= 10%.                                            | Inspect CV and IQR alongside medians before claiming small improvements.                    
+Midpoint at 65,536 records has a 14.06x median time ratio.               | Profile BM_MidpointNative and BM_MidpointBytecodeExecute for this batch size.               
+CreateDestroy measures a separate lifecycle cost.                        | Keep preparation and destruction distinct from repeated execution when interpreting results.
+The JSON contains timings, not a CPU profile.                            | Inspect a profile and assembly before selecting an optimization.                            
+
+Report regenerated exclusively from bench_260923.json. No source code or
+benchmark configuration was changed, and no benchmarks were rerun.
+

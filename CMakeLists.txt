@@ -67,6 +67,10 @@ if(BUILD_TESTING)
     target_link_libraries(faststreamcompute_chunked_tests PRIVATE faststreamcompute_core)
     add_test(NAME chunked_executor COMMAND faststreamcompute_chunked_tests)
 
+    add_executable(faststreamcompute_multi_output_tests tests/test_multi_output.cpp)
+    target_link_libraries(faststreamcompute_multi_output_tests PRIVATE faststreamcompute_core)
+    add_test(NAME multi_output COMMAND faststreamcompute_multi_output_tests)
+
     add_executable(faststreamcompute_program_validation_tests tests/test_program_validation.cpp)
     target_link_libraries(faststreamcompute_program_validation_tests PRIVATE faststreamcompute_core)
     add_test(NAME program_validation COMMAND faststreamcompute_program_validation_tests)

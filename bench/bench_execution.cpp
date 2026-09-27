@@ -247,6 +247,79 @@ static void BM_SpreadBytecodeExecute(benchmark::State& state) {
     state.SetItemsProcessed(state.iterations() * state.range(0));
 }
 
+static void BM_RelativeSpreadBytecodeExecute(benchmark::State& state) {
+    const auto count = static_cast<std::size_t>(state.range(0));
+    const auto records = faststreamcompute::generateRecords(count);
+    std::vector<double> output(count);
+    const auto program = makeRelativeSpreadProgram();
+    const auto expected = makeExpected(records, program, "relative_spread");
+
+    faststreamcompute::ExecutionBlueprint blueprint(program);
+    faststreamcompute::BytecodeExecutor executor(blueprint);
+
+    // Warmup
+    for (int warmup = 0; warmup < 3; ++warmup) {
+        faststreamcompute::batchExecute(executor, records, output);
+    }
+
+    // Correctness check
+    if (!checkOutput(state, output, expected, "before timing")) {
+        return;
+    }
+
+    auto* output_data = output.data();
+    benchmark::DoNotOptimize(output_data);
+
+    for (auto _ : state) {
+        faststreamcompute::batchExecute(executor, records, output);
+        benchmark::ClobberMemory();
+    }
+
+    // Correctness check
+    if (!checkOutput(state, output, expected, "after timing")) {
+        return;
+    }
+    
+    state.SetItemsProcessed(state.iterations() * state.range(0));
+}
+
+static void BM_MidpointChunkedBytecodeExecute(benchmark::State& state) {
+    const auto count = static_cast<std::size_t>(state.range(0));
+    const auto chunk_capacity = static_cast<std::size_t>(state.range(1));
+    const auto records = faststreamcompute::generateRecords(count);
+    std::vector<double> output(count);
+    const auto program = makeMidpointProgram();
+    const auto expected = makeExpected(records, program, "midpoint");
+
+    faststreamcompute::ExecutionBlueprint blueprint(program);
+    faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
+
+    // Warmup
+    for (int warmup = 0; warmup < 3; ++warmup) {
+        executor.execute(records, output);
+    }
+
+    // Correctness check
+    if (!checkOutput(state, output, expected, "before timing")) {
+        return;
+    }
+
+    auto* output_data = output.data();
+    benchmark::DoNotOptimize(output_data);
+
+    for (auto _ : state) {
+        executor.execute(records, output);
+        benchmark::ClobberMemory();
+    }
+
+    // Correctness check
+    if (!checkOutput(state, output, expected, "after timing")) {
+        return;
+    }
+
+    state.SetItemsProcessed(state.iterations() * state.range(0));
+}
+
 static void BM_SpreadChunkedBytecodeExecute(benchmark::State& state) {
     const auto count = static_cast<std::size_t>(state.range(0));
     const auto chunk_capacity = static_cast<std::size_t>(state.range(1));
@@ -284,19 +357,20 @@ static void BM_SpreadChunkedBytecodeExecute(benchmark::State& state) {
     state.SetItemsProcessed(state.iterations() * state.range(0));
 }
 
-static void BM_RelativeSpreadBytecodeExecute(benchmark::State& state) {
+static void BM_RelativeSpreadChunkedBytecodeExecute(benchmark::State& state) {
     const auto count = static_cast<std::size_t>(state.range(0));
+    const auto chunk_capacity = static_cast<std::size_t>(state.range(1));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
     const auto program = makeRelativeSpreadProgram();
     const auto expected = makeExpected(records, program, "relative_spread");
 
     faststreamcompute::ExecutionBlueprint blueprint(program);
-    faststreamcompute::BytecodeExecutor executor(blueprint);
+    faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
 
     // Warmup
     for (int warmup = 0; warmup < 3; ++warmup) {
-        faststreamcompute::batchExecute(executor, records, output);
+        executor.execute(records, output);
     }
 
     // Correctness check
@@ -308,7 +382,7 @@ static void BM_RelativeSpreadBytecodeExecute(benchmark::State& state) {
     benchmark::DoNotOptimize(output_data);
 
     for (auto _ : state) {
-        faststreamcompute::batchExecute(executor, records, output);
+        executor.execute(records, output);
         benchmark::ClobberMemory();
     }
 
@@ -316,7 +390,7 @@ static void BM_RelativeSpreadBytecodeExecute(benchmark::State& state) {
     if (!checkOutput(state, output, expected, "after timing")) {
         return;
     }
-    
+
     state.SetItemsProcessed(state.iterations() * state.range(0));
 }
 
@@ -496,6 +570,187 @@ static void BM_RelativeSpreadBytecodeCreateExecuteDestroy(benchmark::State& stat
     state.SetItemsProcessed(state.iterations() * state.range(0));
 }
 
+// Chunked preparation and lifecycle: same boundaries as the row-bytecode benchmarks.
+static void BM_MidpointChunkedBytecodeCreateDestroy(benchmark::State& state) {
+    const auto chunk_capacity = static_cast<std::size_t>(state.range(0));
+    const auto program = makeMidpointProgram();
+
+    // Warmup
+    for (int warmup = 0; warmup < 3; ++warmup) {
+        faststreamcompute::ExecutionBlueprint blueprint(program);
+        faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
+        benchmark::DoNotOptimize(executor);
+        benchmark::ClobberMemory();
+    }
+
+    for (auto _ : state) {
+        faststreamcompute::ExecutionBlueprint blueprint(program);
+        faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
+        benchmark::DoNotOptimize(executor);
+        benchmark::ClobberMemory();
+        // Both local objects are destroyed here, inside the timed iteration.
+    }
+}
+
+static void BM_MidpointChunkedBytecodeCreateExecuteDestroy(benchmark::State& state) {
+    const auto count = static_cast<std::size_t>(state.range(0));
+    const auto chunk_capacity = static_cast<std::size_t>(state.range(1));
+    const auto records = faststreamcompute::generateRecords(count);
+    std::vector<double> output(count);
+    const auto program = makeMidpointProgram();
+    const auto expected = makeExpected(records, program, "midpoint");
+
+    // Warmup
+    for (int warmup = 0; warmup < 3; ++warmup) {
+        faststreamcompute::ExecutionBlueprint blueprint(program);
+        faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
+        executor.execute(records, output);
+    }
+
+    // Correctness check
+    if (!checkOutput(state, output, expected, "before timing")) {
+        return;
+    }
+
+    auto* output_data = output.data();
+    benchmark::DoNotOptimize(output_data);
+
+    for (auto _ : state) {
+        faststreamcompute::ExecutionBlueprint blueprint(program);
+        faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
+        executor.execute(records, output);
+        benchmark::ClobberMemory();
+        // Destruction is included in this lifecycle measurement.
+    }
+
+    // Correctness check
+    if (!checkOutput(state, output, expected, "after timing")) {
+        return;
+    }
+
+    state.SetItemsProcessed(state.iterations() * state.range(0));
+}
+
+static void BM_SpreadChunkedBytecodeCreateDestroy(benchmark::State& state) {
+    const auto chunk_capacity = static_cast<std::size_t>(state.range(0));
+    const auto program = makeSpreadProgram();
+
+    // Warmup
+    for (int warmup = 0; warmup < 3; ++warmup) {
+        faststreamcompute::ExecutionBlueprint blueprint(program);
+        faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
+        benchmark::DoNotOptimize(executor);
+        benchmark::ClobberMemory();
+    }
+
+    for (auto _ : state) {
+        faststreamcompute::ExecutionBlueprint blueprint(program);
+        faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
+        benchmark::DoNotOptimize(executor);
+        benchmark::ClobberMemory();
+        // Both local objects are destroyed here, inside the timed iteration.
+    }
+}
+
+static void BM_SpreadChunkedBytecodeCreateExecuteDestroy(benchmark::State& state) {
+    const auto count = static_cast<std::size_t>(state.range(0));
+    const auto chunk_capacity = static_cast<std::size_t>(state.range(1));
+    const auto records = faststreamcompute::generateRecords(count);
+    std::vector<double> output(count);
+    const auto program = makeSpreadProgram();
+    const auto expected = makeExpected(records, program, "spread");
+
+    // Warmup
+    for (int warmup = 0; warmup < 3; ++warmup) {
+        faststreamcompute::ExecutionBlueprint blueprint(program);
+        faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
+        executor.execute(records, output);
+    }
+
+    // Correctness check
+    if (!checkOutput(state, output, expected, "before timing")) {
+        return;
+    }
+
+    auto* output_data = output.data();
+    benchmark::DoNotOptimize(output_data);
+
+    for (auto _ : state) {
+        faststreamcompute::ExecutionBlueprint blueprint(program);
+        faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
+        executor.execute(records, output);
+        benchmark::ClobberMemory();
+        // Destruction is included in this lifecycle measurement.
+    }
+
+    // Correctness check
+    if (!checkOutput(state, output, expected, "after timing")) {
+        return;
+    }
+
+    state.SetItemsProcessed(state.iterations() * state.range(0));
+}
+
+static void BM_RelativeSpreadChunkedBytecodeCreateDestroy(benchmark::State& state) {
+    const auto chunk_capacity = static_cast<std::size_t>(state.range(0));
+    const auto program = makeRelativeSpreadProgram();
+
+    // Warmup
+    for (int warmup = 0; warmup < 3; ++warmup) {
+        faststreamcompute::ExecutionBlueprint blueprint(program);
+        faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
+        benchmark::DoNotOptimize(executor);
+        benchmark::ClobberMemory();
+    }
+
+    for (auto _ : state) {
+        faststreamcompute::ExecutionBlueprint blueprint(program);
+        faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
+        benchmark::DoNotOptimize(executor);
+        benchmark::ClobberMemory();
+        // Both local objects are destroyed here, inside the timed iteration.
+    }
+}
+
+static void BM_RelativeSpreadChunkedBytecodeCreateExecuteDestroy(benchmark::State& state) {
+    const auto count = static_cast<std::size_t>(state.range(0));
+    const auto chunk_capacity = static_cast<std::size_t>(state.range(1));
+    const auto records = faststreamcompute::generateRecords(count);
+    std::vector<double> output(count);
+    const auto program = makeRelativeSpreadProgram();
+    const auto expected = makeExpected(records, program, "relative_spread");
+
+    // Warmup
+    for (int warmup = 0; warmup < 3; ++warmup) {
+        faststreamcompute::ExecutionBlueprint blueprint(program);
+        faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
+        executor.execute(records, output);
+    }
+
+    // Correctness check
+    if (!checkOutput(state, output, expected, "before timing")) {
+        return;
+    }
+
+    auto* output_data = output.data();
+    benchmark::DoNotOptimize(output_data);
+
+    for (auto _ : state) {
+        faststreamcompute::ExecutionBlueprint blueprint(program);
+        faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
+        executor.execute(records, output);
+        benchmark::ClobberMemory();
+        // Destruction is included in this lifecycle measurement.
+    }
+
+    // Correctness check
+    if (!checkOutput(state, output, expected, "after timing")) {
+        return;
+    }
+
+    state.SetItemsProcessed(state.iterations() * state.range(0));
+}
+
 BENCHMARK(BM_MidpointNative)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
 BENCHMARK(BM_MidpointBytecodeExecute)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
 BENCHMARK(BM_MidpointBytecodeCreateDestroy)->UseRealTime()->Unit(benchmark::kNanosecond);
@@ -505,9 +760,33 @@ BENCHMARK(BM_SpreadNative)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->
 BENCHMARK(BM_SpreadBytecodeExecute)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
 BENCHMARK(BM_SpreadBytecodeCreateDestroy)->UseRealTime()->Unit(benchmark::kNanosecond);
 BENCHMARK(BM_SpreadBytecodeCreateExecuteDestroy)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
-BENCHMARK(BM_SpreadChunkedBytecodeExecute)->Args({4096, 256})->Args({65536, 256})->Args({1048576, 256})->UseRealTime()->Unit(benchmark::kNanosecond);
 
 BENCHMARK(BM_RelativeSpreadNative)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
 BENCHMARK(BM_RelativeSpreadBytecodeExecute)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
 BENCHMARK(BM_RelativeSpreadBytecodeCreateDestroy)->UseRealTime()->Unit(benchmark::kNanosecond);
 BENCHMARK(BM_RelativeSpreadBytecodeCreateExecuteDestroy)->Arg(4096)->Arg(65536)->Arg(1048576)->UseRealTime()->Unit(benchmark::kNanosecond);
+
+// Chunked
+// Compare chunk capacities at 4096 records, then batch sizes at capacity 256.
+BENCHMARK(BM_MidpointChunkedBytecodeExecute)
+    ->Args({4096, 32})->Args({4096, 64})->Args({4096, 128})
+    ->Args({4096, 256})->Args({4096, 512})->Args({4096, 1024})
+    ->Args({65536, 256})->Args({1048576, 256})
+    ->UseRealTime()->Unit(benchmark::kNanosecond);
+BENCHMARK(BM_SpreadChunkedBytecodeExecute)
+    ->Args({4096, 32})->Args({4096, 64})->Args({4096, 128})
+    ->Args({4096, 256})->Args({4096, 512})->Args({4096, 1024})
+    ->Args({65536, 256})->Args({1048576, 256})
+    ->UseRealTime()->Unit(benchmark::kNanosecond);
+BENCHMARK(BM_RelativeSpreadChunkedBytecodeExecute)
+    ->Args({4096, 32})->Args({4096, 64})->Args({4096, 128})
+    ->Args({4096, 256})->Args({4096, 512})->Args({4096, 1024})
+    ->Args({65536, 256})->Args({1048576, 256})
+    ->UseRealTime()->Unit(benchmark::kNanosecond);
+
+BENCHMARK(BM_MidpointChunkedBytecodeCreateDestroy)->Arg(256)->UseRealTime()->Unit(benchmark::kNanosecond);
+BENCHMARK(BM_MidpointChunkedBytecodeCreateExecuteDestroy)->Args({4096, 256})->Args({65536, 256})->Args({1048576, 256})->UseRealTime()->Unit(benchmark::kNanosecond);
+BENCHMARK(BM_SpreadChunkedBytecodeCreateDestroy)->Arg(256)->UseRealTime()->Unit(benchmark::kNanosecond);
+BENCHMARK(BM_SpreadChunkedBytecodeCreateExecuteDestroy)->Args({4096, 256})->Args({65536, 256})->Args({1048576, 256})->UseRealTime()->Unit(benchmark::kNanosecond);
+BENCHMARK(BM_RelativeSpreadChunkedBytecodeCreateDestroy)->Arg(256)->UseRealTime()->Unit(benchmark::kNanosecond);
+BENCHMARK(BM_RelativeSpreadChunkedBytecodeCreateExecuteDestroy)->Args({4096, 256})->Args({65536, 256})->Args({1048576, 256})->UseRealTime()->Unit(benchmark::kNanosecond);

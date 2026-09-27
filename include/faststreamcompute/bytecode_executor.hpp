@@ -19,6 +19,7 @@ namespace faststreamcompute {
     };
 
     using RegisterID = std::size_t;
+    using OutputBuffer = std::span<double>;
 
     enum class InputField : std::size_t {
         Bid,
@@ -72,9 +73,10 @@ namespace faststreamcompute {
         public:
             ChunkedBytecodeExecutor(ExecutionBlueprint bp, std::size_t capacity);
             void execute(const std::vector<QuoteRecord>& records, std::span<double> output);
+            void execute(const std::vector<QuoteRecord>& records, std::span<const OutputBuffer> outputs);
 
     };
 
-    // Single output for now
     void batchExecute(BytecodeExecutor& executor, std::span<const faststreamcompute::QuoteRecord> records, std::span<double> output);
+    void batchExecute(BytecodeExecutor& executor, std::span<const faststreamcompute::QuoteRecord> records, std::span<const OutputBuffer> outputs);
 }

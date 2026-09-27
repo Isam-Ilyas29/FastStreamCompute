@@ -129,11 +129,18 @@ namespace faststreamcompute {
     }
 
     void ChunkedBytecodeExecutor::execute(const std::vector<QuoteRecord>& records, std::span<double> output) {
-        if (records.size() != output.size()) {
-            throw std::invalid_argument("batch size mismatch");
+        const OutputBuffer outputs[] = {output};
+        execute(records, outputs);
+    }
+
+    void ChunkedBytecodeExecutor::execute(const std::vector<QuoteRecord>& records, std::span<const OutputBuffer> outputs) {
+        if (outputs.size() != blueprint.getOutputNames().size()) {
+            throw std::invalid_argument("output count mismatch");
         }
-        if (blueprint.getOutputNames().size() != 1) {
-            throw std::invalid_argument("chunked execution requires exactly one output");
+        for (OutputBuffer output : outputs) {
+            if (records.size() != output.size()) {
+                throw std::invalid_argument("batch size mismatch");
+            }
         }
 
         std::size_t offset = 0;
@@ -186,7 +193,7 @@ namespace faststreamcompute {
                         break;
                     case OpCode::STORE_OUTPUT_F64:
                         for (std::size_t lane = 0; lane < count; ++lane) {
-                            output[offset + lane] = scratch[(i.src0 * chunk_capacity) + lane];
+                            outputs[i.auxiliary][offset + lane] = scratch[(i.src0 * chunk_capacity) + lane];
                         }
                         break;
                     default:
@@ -203,15 +210,25 @@ namespace faststreamcompute {
     //
 
     void batchExecute(BytecodeExecutor& executor, std::span<const faststreamcompute::QuoteRecord> records, std::span<double> output) {
-        if (records.size() != output.size()) {
-            throw std::invalid_argument("batch size mismatch");
+        const OutputBuffer outputs[] = {output};
+        batchExecute(executor, records, outputs);
+    }
+
+    void batchExecute(BytecodeExecutor& executor, std::span<const faststreamcompute::QuoteRecord> records, std::span<const OutputBuffer> outputs) {
+        if (outputs.size() != executor.outputCount()) {
+            throw std::invalid_argument("output count mismatch");
         }
-        if (executor.outputCount() != 1) {
-            throw std::invalid_argument("batch requires exactly one output");
+        for (OutputBuffer output : outputs) {
+            if (records.size() != output.size()) {
+                throw std::invalid_argument("batch size mismatch");
+            }
         }
         
         for (std::size_t i = 0; i < records.size(); ++i) {
-            output[i] = executor.execute(records[i])[0];
+            const std::vector<double>& values = executor.execute(records[i]);
+            for (std::size_t slot = 0; slot < outputs.size(); ++slot) {
+                outputs[slot][i] = values[slot];
+            }
         }
     }
 }
