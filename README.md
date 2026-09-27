@@ -11,13 +11,13 @@ remeasured. I found that that in this instance bytecode interpretation was only 
 and 12.8% fewer cycles. The faster version has lowe IPC so IPC alone does not mean a faster program. Surprisingly, native performance only improved by 1.17x and
 bytecode performance also improved by 1.14x. However, I believe that the biggest improvement can come from bytecode executing less instructions since it has a higher 
 IPC than native and runs 17.7x more instructions than native. It calculates opcodes and operands every instruction for batchExecute even if it is the same, I should
-find a way to reduce this control logic. Contiguous arithmetic loops should strive to enable automatic vectorisation.
+find a way to reduce this control logic. Contiguous arithmetic loops should strive to enable automatic vectorisation.**
 
-Processing 256 records per chunk reduced introduced a 7.9x speedup. Instructions reduces by 85.7% and cycles by 87.7%. The gap to native narrowed to 1.97x in these 
+**Processing 256 records per chunk reduced introduced a 7.9x speedup. Instructions reduces by 85.7% and cycles by 87.7%. The gap to native narrowed to 1.97x in these 
 runs. This supports the original hypothesis. The new assemblu contains packed subtractions, showing that the compiler successfuly vectorised the chunked arithmetic 
-loop. This result only covers spread at one batch size and chunk capacity.
+loop. This result only covers spread at one batch size and chunk capacity.**
 
-On my Windows laptop, chunked bytecode execution with a capacity of 256 was 3.56–6.87x faster than the original executor across spread, midpoint and
+**On my Windows laptop, chunked bytecode execution with a capacity of 256 was 3.56–6.87x faster than the original executor across spread, midpoint and
 relative spread, using batches from 4,096 to 1,048,576 records. An experiment at chunk size of 4,096 found the lowest median times at 1,024 records per chunk for
 spread, 512 for midpoint and 64 for relative spread.This shows that larger chunks are not always better. they reduce repeated instruction handling but increase 
 temporary storage, and the balance depends on the expression. I then tested the creation and destruction costs of the chunked executor which was similar to
@@ -27,7 +27,7 @@ the original bytecode executor. All existing CTest's passed.**
 
 ### Linux perf
 
-Spread on an i7-8700T running Manjaro: 4,096 records per batch, 100,000 iterations, five runs. [Raw results](docs/benchmarks/spread_ipc.txt).
+Spread on an i7-8700T running Manjaro: 4,096 records per batch, 100,000 iterations, five runs. [Raw results](docs/bench/spread_ipc.txt).
 
 | Measurement | Native | Bytecode |
 |---|---:|---:|
@@ -36,48 +36,48 @@ Spread on an i7-8700T running Manjaro: 4,096 records per batch, 100,000 iteratio
 | Mean cycles per run / billions | 0.741 | 12.341 |
 | Instructions per cycle | 2.79 | 2.96 |
 
-The counters cover the whole process; batch times cover the benchmark loop. [perf report](docs/benchmarks/spread-bytecode-report.txt) puts 80.61% of cycle samples in `BytecodeExecutor::execute`. A [separate vectorisation check](docs/benchmarks/spread-vector-comparison.txt) found a 1.17x native speedup with vectorisation enabled, while bytecode remained 12.32x slower with it disabled in both builds. Next is measuring whether chunking reduces the repeated instruction handling.
+The counters cover the whole process; batch times cover the benchmark loop. [perf report](docs/bench/spread-bytecode-report.txt) puts 80.61% of cycle samples in `BytecodeExecutor::execute`. A [separate vectorisation check](docs/bench/spread-vector-comparison.txt) found a 1.17x native speedup with vectorisation enabled, while bytecode remained 12.32x slower with it disabled in both builds. Next is measuring whether chunking reduces the repeated instruction handling.
 
 ### Windows baseline
 
-These charts use [the 23 September 2026 Windows run](docs/benchmarks/bench_260923.json), with 20 repetitions per case. Lower times are better; each dot is a repetition average, not an individual record's latency. These are baseline measurements, not proof of performance on every workload.
+These charts use [the 23 September 2026 Windows run](docs/bench/bench_260923.json), with 20 repetitions per case. Lower times are better; each dot is a repetition average, not an individual record's latency. These are baseline measurements, not proof of performance on every workload.
 
 ### Midpoint
 
 Bytecode execution stays near 5.4 ns per record across batch sizes.
 
-![Midpoint performance](docs/benchmarks/graphs/bench_260923_Midpoint_performance.png)
+![Midpoint performance](docs/bench/graphs/bench_260923_Midpoint_performance.png)
 
 Native midpoint results vary more at the largest batch size.
 
-![Midpoint variability](docs/benchmarks/graphs/bench_260923_Midpoint_variability.png)
+![Midpoint variability](docs/bench/graphs/bench_260923_Midpoint_variability.png)
 
 ### Spread
 
 Bytecode spread takes roughly 4.1 ns per record across batch sizes.
 
-![Spread performance](docs/benchmarks/graphs/bench_260923_Spread_performance.png)
+![Spread performance](docs/bench/graphs/bench_260923_Spread_performance.png)
 
 Bytecode spread results cluster fairly tightly across repetitions.
 
-![Spread variability](docs/benchmarks/graphs/bench_260923_Spread_variability.png)
+![Spread variability](docs/bench/graphs/bench_260923_Spread_variability.png)
 
 ### Relative spread
 
 Bytecode relative spread takes roughly 5.7–5.9 ns per record.
 
-![Relative spread performance](docs/benchmarks/graphs/bench_260923_RelativeSpread_performance.png)
+![Relative spread performance](docs/bench/graphs/bench_260923_RelativeSpread_performance.png)
 
 The largest batch includes an unusually slow bytecode execution repetition.
 
-![Relative spread variability](docs/benchmarks/graphs/bench_260923_RelativeSpread_variability.png)
+![Relative spread variability](docs/bench/graphs/bench_260923_RelativeSpread_variability.png)
 
 ### Creation and destruction
 
 Median creation and destruction costs range from about 295 to 409 ns.
 
-![BytecodeCreateDestroy performance](docs/benchmarks/graphs/bench_260923_BytecodeCreateDestroy_performance.png)
+![BytecodeCreateDestroy performance](docs/bench/graphs/bench_260923_BytecodeCreateDestroy_performance.png)
 
 All three creation benchmarks have occasional slower repetition averages.
 
-![BytecodeCreateDestroy variability](docs/benchmarks/graphs/bench_260923_BytecodeCreateDestroy_variability.png)
+![BytecodeCreateDestroy variability](docs/bench/graphs/bench_260923_BytecodeCreateDestroy_variability.png)
