@@ -37,6 +37,7 @@ if(FSC_BUILD_BENCHMARKS)
 
     add_executable(faststreamcompute_bench
         bench/bench_execution.cpp
+        bench/bench_program_optimisation.cpp
     )
 
     target_link_libraries(faststreamcompute_bench PRIVATE

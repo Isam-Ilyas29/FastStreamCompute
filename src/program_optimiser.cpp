@@ -133,8 +133,7 @@ namespace faststreamcompute {
             foldConstants(nodes);
         }
 
-        const auto required = options.remove_dead_nodes
-            ? findRequiredNodes(nodes) : std::vector<bool>(nodes.size(), true);
+        const auto required = options.remove_dead_nodes ? findRequiredNodes(nodes) : std::vector<bool>(nodes.size(), true);
         return rebuildProgram(nodes, required, options.eliminate_common_subexpressions);
     }
 }

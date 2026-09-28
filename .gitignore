@@ -31,3 +31,6 @@ Thumbs.db
 # Research PDFs are local;
 /docs/*.pdf
 /docs/*.txt
+
+#
+AGENTS.md

@@ -16,3 +16,9 @@ relative spread, using batches from 4,096 to 1,048,576 records. An experiment at
 spread, 512 for midpoint and 64 for relative spread.This shows that larger chunks are not always better. they reduce repeated instruction handling but increase 
 temporary storage, and the balance depends on the expression. I then tested the creation and destruction costs of the chunked executor which was similar to
 the original bytecode executor. All existing CTest's passed.
+
+Next I implemented graph optimisations. The three optimisations were to remove unused nodes, fold all constant expressions and CSE (common subexpression elimination).
+I benchmarked them against 4,096 records and 65,536 records with chunk capacity 256 (on a program which could be optimised using all 3 optimisations); the improvents,
+respectively, were 1.13x, 1.06x, 1.08x. Optimising with all 3 options produces a 1.53x speedup. The reduction of scratch storage correlates with the number of nodes
+(virtual registers) reduced. The median creation and destruction cost of optimising the test program was +0.138 (1.17x) microseconds. These results describe one 
+deliberately optimisable program, so they demonstrate the potential benefit of the passes rather than an expected speedup for every program.
