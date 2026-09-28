@@ -5,7 +5,7 @@
 #include <cstddef>
 
 namespace faststreamcompute {
-    void midpointAOS(std::span<const faststreamcompute::QuoteRecord> input, std::span<double> output) {
+    void midpointAOS(std::span<const QuoteRecord> input, std::span<double> output) {
         if (input.size() != output.size()) {
             throw std::invalid_argument("midpoint size mismatch");
         }
@@ -16,7 +16,7 @@ namespace faststreamcompute {
         }
     }
 
-    void spreadAOS(std::span<const faststreamcompute::QuoteRecord> input, std::span<double> output) {
+    void spreadAOS(std::span<const QuoteRecord> input, std::span<double> output) {
         if (input.size() != output.size()) {
             throw std::invalid_argument("spread size mismatch");
         }
@@ -26,7 +26,7 @@ namespace faststreamcompute {
         }
     }
 
-    void relativeSpreadAOS(std::span<const faststreamcompute::QuoteRecord> input, std::span<double> output) {
+    void relativeSpreadAOS(std::span<const QuoteRecord> input, std::span<double> output) {
         if (input.size() != output.size()) {
             throw std::invalid_argument("relative spread size mismatch");
         }

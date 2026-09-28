@@ -77,6 +77,6 @@ namespace faststreamcompute {
 
     };
 
-    void batchExecute(BytecodeExecutor& executor, std::span<const faststreamcompute::QuoteRecord> records, std::span<double> output);
-    void batchExecute(BytecodeExecutor& executor, std::span<const faststreamcompute::QuoteRecord> records, std::span<const OutputBuffer> outputs);
+    void batchExecute(BytecodeExecutor& executor, std::span<const QuoteRecord> records, std::span<double> output);
+    void batchExecute(BytecodeExecutor& executor, std::span<const QuoteRecord> records, std::span<const OutputBuffer> outputs);
 }

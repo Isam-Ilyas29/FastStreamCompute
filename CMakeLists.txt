@@ -10,7 +10,8 @@ add_library(faststreamcompute_core src/program.cpp
     src/reference_executor.cpp
     src/bytecode_executor.cpp
     src/native_kernel.cpp
-    src/record_generator.cpp)
+    src/record_generator.cpp
+    src/program_optimiser.cpp)
 target_include_directories(faststreamcompute_core PUBLIC include)
 
 add_executable(faststreamcompute src/main.cpp)
@@ -78,4 +79,8 @@ if(BUILD_TESTING)
     add_executable(faststreamcompute_native_kernel_tests tests/test_native_kernel.cpp)
     target_link_libraries(faststreamcompute_native_kernel_tests PRIVATE faststreamcompute_core)
     add_test(NAME native_kernels COMMAND faststreamcompute_native_kernel_tests)
+
+    add_executable(faststreamcompute_optimiser_tests tests/test_program_optimiser.cpp)
+    target_link_libraries(faststreamcompute_optimiser_tests PRIVATE faststreamcompute_core)
+    add_test(NAME program_optimiser COMMAND faststreamcompute_optimiser_tests)
 endif()

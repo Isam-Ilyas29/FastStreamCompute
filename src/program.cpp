@@ -24,6 +24,11 @@ namespace faststreamcompute {
     }
 
     [[nodiscard]] NodeId Program::inputf64(std::string name) {
+        // Check if input is not bid or ask
+        if (name != "bid" && name != "ask") {
+            throw std::invalid_argument("input name is invalid");
+        }
+        
         Node n{};
         n.id = nodes.size();
         n.name = std::move(name);

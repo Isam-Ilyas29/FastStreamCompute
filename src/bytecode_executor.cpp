@@ -209,12 +209,12 @@ namespace faststreamcompute {
 
     //
 
-    void batchExecute(BytecodeExecutor& executor, std::span<const faststreamcompute::QuoteRecord> records, std::span<double> output) {
+    void batchExecute(BytecodeExecutor& executor, std::span<const QuoteRecord> records, std::span<double> output) {
         const OutputBuffer outputs[] = {output};
         batchExecute(executor, records, outputs);
     }
 
-    void batchExecute(BytecodeExecutor& executor, std::span<const faststreamcompute::QuoteRecord> records, std::span<const OutputBuffer> outputs) {
+    void batchExecute(BytecodeExecutor& executor, std::span<const QuoteRecord> records, std::span<const OutputBuffer> outputs) {
         if (outputs.size() != executor.outputCount()) {
             throw std::invalid_argument("output count mismatch");
         }
