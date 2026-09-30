@@ -18,6 +18,18 @@ add_executable(faststreamcompute src/main.cpp)
 target_link_libraries(faststreamcompute PRIVATE faststreamcompute_core)
 
 option(FSC_BUILD_BENCHMARKS "Download and build Google Benchmark support" OFF)
+option(FSC_DOWNLOAD_FLAMEGRAPH "Download the FlameGraph scripts" ON)
+
+if(FSC_DOWNLOAD_FLAMEGRAPH)
+    include(FetchContent)
+    FetchContent_Declare(flamegraph
+        GIT_REPOSITORY https://github.com/brendangregg/FlameGraph.git
+        GIT_TAG 41fee1f99f9276008b7cd112fca19dc3ea84ac32
+        # One location for the wrapper, regardless of the CMake build directory.
+        SOURCE_DIR "${CMAKE_SOURCE_DIR}/build/_deps/flamegraph-src"
+    )
+    FetchContent_MakeAvailable(flamegraph)
+endif()
 
 if(FSC_BUILD_BENCHMARKS)
     include(FetchContent)
