@@ -15,6 +15,10 @@ namespace faststreamcompute {
         LOAD_F64,
         CONST_F64,
         ADD_F64, SUB_F64, MUL_F64, DIV_F64,
+        ADD_MUL_CONST_F64, // (a + b) * k
+        SUB_MUL_CONST_F64, // (a - b) * k
+        MUL_ADD_CONST_F64, // x * scale + offset
+        SUB_DIV_F64, // (a - b) / c
         STORE_OUTPUT_F64
     };
 
@@ -42,7 +46,7 @@ namespace faststreamcompute {
             std::size_t register_count = 0;
 
         public:
-            ExecutionBlueprint(const Program& p);
+            ExecutionBlueprint(const Program& p, bool use_fusion = true);
 
             const std::vector<Instruction>& getInstructions() const;
             const std::vector<double>& getConstants() const; 

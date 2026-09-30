@@ -93,6 +93,82 @@ void checkResults() {
     }
 }
 
+void checkFusion() {
+    Program p;
+    const auto bid = p.inputf64("bid");
+    const auto ask = p.inputf64("ask");
+    const auto half = p.constant(0.5);
+    const auto add_result = p.add(bid, ask);
+    p.emit("add_mul", p.mul(half, add_result));
+    const auto two = p.constant(2.0);
+    const auto difference = p.sub(ask, bid);
+    p.emit("sub_mul", p.mul(two, difference));
+    const auto three = p.constant(3.0);
+    const auto product = p.mul(bid, ask);
+    p.emit("mul_add", p.add(three, product));
+    const auto second_difference = p.sub(ask, bid);
+    p.constant(99.0);
+    p.emit("sub_div", p.div(second_difference, bid));
+
+    const ExecutionBlueprint blueprint(p);
+    bool has_add_mul = false;
+    bool has_sub_mul = false;
+    bool has_mul_add = false;
+    bool has_sub_div = false;
+    for (const Instruction& instruction : blueprint.getInstructions()) {
+        require(instruction.op != OpCode::NOP, "NOP was not removed");
+        if (instruction.op == OpCode::ADD_MUL_CONST_F64) has_add_mul = true;
+        else if (instruction.op == OpCode::SUB_MUL_CONST_F64) has_sub_mul = true;
+        else if (instruction.op == OpCode::MUL_ADD_CONST_F64) has_mul_add = true;
+        else if (instruction.op == OpCode::SUB_DIV_F64) has_sub_div = true;
+    }
+    require(has_add_mul && has_sub_mul && has_mul_add && has_sub_div,
+        "Expected fused instructions were not created");
+
+    const ExecutionBlueprint unfused_blueprint(p, false);
+    for (const Instruction& instruction : unfused_blueprint.getInstructions()) {
+        require(instruction.op != OpCode::ADD_MUL_CONST_F64
+                && instruction.op != OpCode::SUB_MUL_CONST_F64
+                && instruction.op != OpCode::MUL_ADD_CONST_F64
+                && instruction.op != OpCode::SUB_DIV_F64,
+                "Fusion was used when disabled");
+    }
+
+    const std::vector<QuoteRecord> records(845, {100.0, 102.0});
+    std::vector<std::vector<double>> values(4, std::vector<double>(records.size()));
+    const OutputBuffer outputs[] = {values[0], values[1], values[2], values[3]};
+    ChunkedBytecodeExecutor chunked(blueprint, 256);
+    chunked.execute(records, outputs);
+
+    BytecodeExecutor scalar(blueprint);
+    const auto& scalar_values = scalar.execute(records[0]);
+    const auto expected = referenceExecutor(records[0], p);
+    for (std::size_t output = 0; output < values.size(); ++output) {
+        const double reference = expected.at(blueprint.getOutputNames()[output]);
+        require(values[output].front() == reference && values[output].back() == reference,
+            "Chunked fused output mismatch");
+        require(scalar_values[output] == reference, "Scalar fused output mismatch");
+    }
+
+    Program shared;
+    const auto shared_bid = shared.inputf64("bid");
+    const auto shared_ask = shared.inputf64("ask");
+    const auto sum = shared.add(shared_bid, shared_ask);
+    const auto midpoint = shared.mul(sum, shared.constant(0.5));
+    shared.emit("sum", sum);
+    shared.emit("midpoint", midpoint);
+
+    const ExecutionBlueprint fallback(shared);
+    for (const Instruction& instruction : fallback.getInstructions()) {
+        require(instruction.op != OpCode::ADD_MUL_CONST_F64,
+            "Shared intermediate was incorrectly fused");
+    }
+    BytecodeExecutor fallback_executor(fallback);
+    const auto& fallback_values = fallback_executor.execute({100.0, 102.0});
+    require(fallback_values[0] == 202.0 && fallback_values[1] == 101.0,
+        "Shared intermediate fallback output mismatch");
+}
+
 void expectRejection(ChunkedBytecodeExecutor& executor,
                      const std::vector<QuoteRecord>& records,
                      std::vector<double>& output) {
@@ -147,6 +223,7 @@ void checkInvalidArguments() {
 int main() {
     try {
         checkResults();
+        checkFusion();
         checkInvalidArguments();
     } catch (const std::exception& error) {
         std::cerr << "Chunked executor test failed: " << error.what() << '\n';

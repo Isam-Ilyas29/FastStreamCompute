@@ -32,3 +32,10 @@ too coarse to distinguish small differences in these short executions. I therefo
 were consistently around 220, 239 and 289 ns, compared with 73, 76 and 96 ns for native.  Its p99 was only about 9% above its median. These percentiles give me a baseline
 for checking whether future changes improve typical performance without making the slower executions worse. (TSC has a measured overhead of 14 ns and preturbation was
 minimised using sparse sampling).
+
+Fusion was expected to improve chunked bytecode execution by replacing commmon instruction sequences with one instruction, at the cost of extra work while creating the
+execution blueprint. This was tested using a long program containing all four supported fusion patterns, with identical inputs and a chunk capacity of 256. Across 20
+randomly interleaved repetitions, fusion reduced median execution time by 41.83% for 4,096 records, from 21,749 ns to 12,651 ns, and by 41.31% for 65,536 records, from
+363,246 ns to 213,206 ns. Throughput improved by approximately 1.7× at both sizes. Median creation and destruction time increased by 75 ns for the long program and 45 ns
+for midpoint. For the long workload, one execution saved far more time than fusion added during preparation, so the preparation cost was recovered during the first
+execution.

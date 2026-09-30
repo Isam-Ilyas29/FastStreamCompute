@@ -2,12 +2,13 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <utility>
 
 
 namespace faststreamcompute {
     // ExecutionBlueprint
 
-    ExecutionBlueprint::ExecutionBlueprint(const Program& p) {
+    ExecutionBlueprint::ExecutionBlueprint(const Program& p, bool use_fusion) {
         for (const Node& node: p.getNodes()) {
             if (node.operation == Op::INPUT) {
                 std::size_t field_id;
@@ -44,6 +45,68 @@ namespace faststreamcompute {
             }
         }
         register_count = p.getNodes().size();
+
+        if (use_fusion) {
+            // Prevents fusion from removing intermediate values that have multiple uses.
+            std::vector<std::size_t> use_count(register_count, 0);
+            for (const Instruction& i : instructions) {
+                if (i.op == OpCode::ADD_F64 || i.op == OpCode::SUB_F64 || i.op == OpCode::MUL_F64 || i.op == OpCode::DIV_F64) {
+                    ++use_count[i.src0];
+                    ++use_count[i.src1];
+                }
+                else if (i.op == OpCode::STORE_OUTPUT_F64) {
+                    ++use_count[i.src0];
+                }
+            }
+
+            for (Instruction& result : instructions) {
+                if (result.op == OpCode::MUL_F64) {
+                    Instruction* operation = &instructions[result.src0];
+                    Instruction* constant = &instructions[result.src1];
+
+                    if (operation->op == OpCode::CONST_F64) {
+                        std::swap(operation, constant);
+                    }
+
+                    if (operation->op == OpCode::ADD_F64 && constant->op == OpCode::CONST_F64 && use_count[operation->dst] == 1 && use_count[constant->dst] == 1) {
+                        result = Instruction{OpCode::ADD_MUL_CONST_F64, result.dst, operation->src0, operation->src1, constant->auxiliary};
+                        operation->op = OpCode::NOP;
+                        constant->op = OpCode::NOP;
+                    }
+                    else if (operation->op == OpCode::SUB_F64 && constant->op == OpCode::CONST_F64 && use_count[operation->dst] == 1 && use_count[constant->dst] == 1) {
+                        result = Instruction{OpCode::SUB_MUL_CONST_F64, result.dst, operation->src0, operation->src1, constant->auxiliary};
+                        operation->op = OpCode::NOP;
+                        constant->op = OpCode::NOP;
+                    }
+                }
+                else if (result.op == OpCode::ADD_F64) {
+                    Instruction* operation = &instructions[result.src0];
+                    Instruction* constant = &instructions[result.src1];
+
+                    if (operation->op == OpCode::CONST_F64) {
+                        std::swap(operation, constant);
+                    }
+
+                    if (operation->op == OpCode::MUL_F64 && constant->op == OpCode::CONST_F64 && use_count[operation->dst] == 1 && use_count[constant->dst] == 1) {
+                        result = Instruction{OpCode::MUL_ADD_CONST_F64, result.dst, operation->src0, operation->src1, constant->auxiliary};
+                        operation->op = OpCode::NOP;
+                        constant->op = OpCode::NOP;
+                    }
+                }
+                else if (result.op == OpCode::DIV_F64) {
+                    Instruction& subtraction = instructions[result.src0];
+
+                    if (subtraction.op == OpCode::SUB_F64 && use_count[subtraction.dst] == 1) {
+                        result = Instruction{OpCode::SUB_DIV_F64, result.dst, subtraction.src0, subtraction.src1, result.src1};
+                        subtraction.op = OpCode::NOP;
+                    }
+                }
+            }
+
+            std::erase_if(instructions, [](const Instruction& i) {
+                return i.op == OpCode::NOP;
+            });
+        }
     }
 
     const std::vector<Instruction>& ExecutionBlueprint::getInstructions() const {
@@ -94,6 +157,18 @@ namespace faststreamcompute {
                     break;
                 case OpCode::DIV_F64:
                     registers[i.dst]  = registers[i.src0] / registers[i.src1];
+                    break;
+                case OpCode::ADD_MUL_CONST_F64:
+                    registers[i.dst] = (registers[i.src0] + registers[i.src1]) * blueprint.getConstants()[i.auxiliary];
+                    break;
+                case OpCode::SUB_MUL_CONST_F64:
+                    registers[i.dst] = (registers[i.src0] - registers[i.src1]) * blueprint.getConstants()[i.auxiliary];
+                    break;
+                case OpCode::MUL_ADD_CONST_F64:
+                    registers[i.dst] = (registers[i.src0] * registers[i.src1]) + blueprint.getConstants()[i.auxiliary];
+                    break;
+                case OpCode::SUB_DIV_F64:
+                    registers[i.dst] = (registers[i.src0] - registers[i.src1]) / registers[i.auxiliary];
                     break;
                 case OpCode::STORE_OUTPUT_F64:
                     outputs[i.auxiliary] = registers[i.src0];
@@ -189,6 +264,32 @@ namespace faststreamcompute {
                     case OpCode::DIV_F64:
                         for (std::size_t lane = 0; lane < count; ++lane) {
                             scratch[(i.dst * chunk_capacity) + lane] = scratch[(i.src0 * chunk_capacity) + lane] / scratch[(i.src1 * chunk_capacity) + lane];
+                        }
+                        break;
+                    case OpCode::ADD_MUL_CONST_F64: {
+                        const double constant = blueprint.getConstants()[i.auxiliary];
+                        for (std::size_t lane = 0; lane < count; ++lane) {
+                            scratch[(i.dst * chunk_capacity) + lane] = (scratch[(i.src0 * chunk_capacity) + lane] + scratch[(i.src1 * chunk_capacity) + lane]) * constant;
+                        }
+                        break;
+                    }
+                    case OpCode::SUB_MUL_CONST_F64: {
+                        const double constant = blueprint.getConstants()[i.auxiliary];
+                        for (std::size_t lane = 0; lane < count; ++lane) {
+                            scratch[(i.dst * chunk_capacity) + lane] = (scratch[(i.src0 * chunk_capacity) + lane] - scratch[(i.src1 * chunk_capacity) + lane]) * constant;
+                        }
+                        break;
+                    }
+                    case OpCode::MUL_ADD_CONST_F64: {
+                        const double constant = blueprint.getConstants()[i.auxiliary];
+                        for (std::size_t lane = 0; lane < count; ++lane) {
+                            scratch[(i.dst * chunk_capacity) + lane] = (scratch[(i.src0 * chunk_capacity) + lane] * scratch[(i.src1 * chunk_capacity) + lane]) + constant;
+                        }
+                        break;
+                    }
+                    case OpCode::SUB_DIV_F64:
+                        for (std::size_t lane = 0; lane < count; ++lane) {
+                            scratch[(i.dst * chunk_capacity) + lane] = (scratch[(i.src0 * chunk_capacity) + lane] - scratch[(i.src1 * chunk_capacity) + lane]) / scratch[(i.auxiliary * chunk_capacity) + lane];
                         }
                         break;
                     case OpCode::STORE_OUTPUT_F64:

@@ -1,0 +1,55 @@
+FUSION BENCHMARK RESULTS
+
+20 randomly interleaved repetitions.
+Comparisons use median real time.
+Chunk capacity: 256 records.
+
+EXECUTION AND PREPARATION TIME
+
+Benchmark                          Fusion off / ns   Fusion on / ns   Time change / %
+Long execution, 4,096 records                21,749           12,651            -41.83
+Long execution, 65,536 records              363,246          213,206            -41.31
+Long creation and destruction                2,516            2,591             +2.98
+Midpoint creation and destruction              737              782             +6.11
+
+Negative time change means less time taken.
+Execution times cover the entire input batch.
+
+EXECUTION THROUGHPUT
+
+Records   Fusion off / million records/s   Fusion on / million records/s   Speedup
+  4,096                         188.329                         323.769     1.72x
+ 65,536                         180.419                         307.386     1.70x
+
+VARIABILITY
+
+Benchmark                          Fusion off CV / %   Fusion on CV / %
+Long execution, 4,096 records                   2.03               2.41
+Long execution, 65,536 records                  3.53               3.01
+Long creation and destruction                 12.94              12.18
+Midpoint creation and destruction              4.11               5.46
+
+CV is the standard deviation divided by the mean, expressed as a percentage.
+
+INTERPRETATION
+
+Fusion reduced median execution time by approximately 41% at both input
+sizes, corresponding to approximately 1.7x throughput.
+
+At 4,096 records, fusion saved 9,098 ns per execution. Median long-program
+creation and destruction time increased by 75 ns. These measurements
+suggest that the additional preparation cost is recovered within the
+first execution of this workload.
+
+The creation benchmark includes blueprint construction, chunked executor
+construction, scratch allocation and destruction. The Program is built
+outside timing. The comparison measures the net effect of enabling fusion
+on this lifecycle; it does not isolate the fusion loop itself.
+
+Median preparation time increased by 75 ns for the long program and
+45 ns for midpoint. Preparation measurements were noisier, so these small
+differences should be treated as approximate rather than precise costs.
+
+The execution improvement is stronger evidence: it appears at both input
+sizes, has real-time CV between 2.03% and 3.53%, and produces similar
+speedup ratios. These results apply to this workload and machine.
