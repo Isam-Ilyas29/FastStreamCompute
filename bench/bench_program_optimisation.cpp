@@ -43,7 +43,7 @@ namespace {
         return expected;
     }
 
-    bool checkOutputs(benchmark::State& state, std::span<const faststreamcompute::OutputBuffer> outputs, const std::vector<std::vector<double>>& expected, std::string_view phase) {
+    bool validateOutputs(benchmark::State& state, std::span<const faststreamcompute::OutputBuffer> outputs, const std::vector<std::vector<double>>& expected, std::string_view phase) {
         for (std::size_t lane = 0; lane < outputs.size(); ++lane) {
             for (std::size_t row = 0; row < outputs[lane].size(); ++row) {
                 if (outputs[lane][row] != expected[lane][row]) {
@@ -81,7 +81,7 @@ static void BM_ProgramOptimisationExecute(benchmark::State& state, faststreamcom
     }
 
     // Correctness check
-    if (!checkOutputs(state, outputs, expected, "before timing")) {
+    if (!validateOutputs(state, outputs, expected, "before timing")) {
         return;
     }
 
@@ -96,7 +96,7 @@ static void BM_ProgramOptimisationExecute(benchmark::State& state, faststreamcom
     }
 
     // Correctness check
-    if (!checkOutputs(state, outputs, expected, "after timing")) {
+    if (!validateOutputs(state, outputs, expected, "after timing")) {
         return;
     }
     state.SetItemsProcessed(state.iterations() * state.range(0));
@@ -118,7 +118,7 @@ static void BM_ProgramOptimisationCreateDestroy(benchmark::State& state, faststr
         faststreamcompute::ExecutionBlueprint blueprint(program);
         faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
         executor.execute(records, outputs);
-        if (!checkOutputs(state, outputs, expected, "preparation warmup")) {
+        if (!validateOutputs(state, outputs, expected, "preparation warmup")) {
             return;
         }
     }

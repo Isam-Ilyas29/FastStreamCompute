@@ -1,0 +1,17 @@
+Empty chrono boundary: 1000000 samples
+min / ns: 26.0, p50 / ns: 29.0, p99 / ns: 43.0, max / ns: 103018.0
+Diagnostic only: not subtracted from batch durations.
+
+Midpoint: 4096 records, chunk capacity 256, 1000000 executions per mode
+Order: None/Sparse/Full, Sparse/Full/None, Full/None/Sparse
+Round | Mode   | Sampling / % | Samples | Whole loop / ms | Change vs None / %
+1     | None   |            0 |       0 |        6921.612 | +0.00
+1     | Sparse |            1 |   10000 |        6659.701 | -3.78
+1     | Full   |          100 | 1000000 |        6741.121 | -2.61
+2     | None   |            0 |       0 |        6624.067 | +0.00
+2     | Sparse |            1 |   10000 |        6675.297 | +0.77
+2     | Full   |          100 | 1000000 |        6766.568 | +2.15
+3     | None   |            0 |       0 |        6571.519 | +0.00
+3     | Sparse |            1 |   10000 |        6587.113 | +0.24
+3     | Full   |          100 | 1000000 |        6710.229 | +2.11
+Random sampling with seed 1234; fractional sample counts round down. Changes are whole-loop effects, not per-sample corrections.

@@ -1,0 +1,137 @@
+Chrono empty boundary: p50 0.000 ns, p99 100.000 ns, p99.9 100.000 ns
+TSC empty boundary: p50 13.706 ns, p99 14.391 ns, p99.9 14.391 ns
+
+256-record midpoint batch, 10000000 executions, 5 rounds, TSC 2918400000 Hz
+Completed round 1
+Completed round 2
+Completed round 3
+Completed round 4
+Completed round 5
+
+Round 1
+Chunked
+None | samples 0 | loop / ms 2110.068 | extra / ns per execution +0.000 | change / % +0.000
+No individual timestamps: no latency percentiles for None.
+Chrono Sparse | samples 100000 | loop / ms 2119.912 | extra / ns per execution +0.984 | change / % +0.467
+p50 / ns 200.000 | p99 / ns 300.000 | p99.9 / ns 300.000 | max / ns 8500.000
+Chrono Full | samples 10000000 | loop / ms 2528.338 | extra / ns per execution +41.827 | change / % +19.823
+p50 / ns 200.000 | p99 / ns 300.000 | p99.9 / ns 300.000 | max / ns 1426200.000
+TSC Sparse | samples 100000 | loop / ms 2107.728 | extra / ns per execution -0.234 | change / % -0.111
+p50 / ns 219.984 | p99 / ns 239.172 | p99.9 / ns 287.829 | max / ns 95172.012
+TSC Full | samples 10000000 | loop / ms 2422.998 | extra / ns per execution +31.293 | change / % +14.830
+p50 / ns 224.095 | p99 / ns 233.004 | p99.9 / ns 293.997 | max / ns 2212661.047
+Native
+None | samples 0 | loop / ms 617.744 | extra / ns per execution +0.000 | change / % +0.000
+No individual timestamps: no latency percentiles for None.
+Chrono Sparse | samples 100000 | loop / ms 619.250 | extra / ns per execution +0.151 | change / % +0.244
+p50 / ns 100.000 | p99 / ns 100.000 | p99.9 / ns 100.000 | max / ns 6000.000
+Chrono Full | samples 10000000 | loop / ms 1052.234 | extra / ns per execution +43.449 | change / % +70.335
+p50 / ns 100.000 | p99 / ns 100.000 | p99.9 / ns 100.000 | max / ns 1955800.000
+TSC Sparse | samples 100000 | loop / ms 622.261 | extra / ns per execution +0.452 | change / % +0.731
+p50 / ns 73.328 | p99 / ns 75.384 | p99.9 / ns 95.943 | max / ns 127678.180
+TSC Full | samples 10000000 | loop / ms 905.845 | extra / ns per execution +28.810 | change / % +46.638
+p50 / ns 74.698 | p99 / ns 78.125 | p99.9 / ns 97.314 | max / ns 1468095.532
+None: chunked 211.007 ns/batch, native 61.774 ns/batch; chunked/native 3.42x
+
+Round 2
+Chunked
+None | samples 0 | loop / ms 2105.356 | extra / ns per execution +0.000 | change / % +0.000
+No individual timestamps: no latency percentiles for None.
+Chrono Sparse | samples 100000 | loop / ms 2198.655 | extra / ns per execution +9.330 | change / % +4.432
+p50 / ns 200.000 | p99 / ns 300.000 | p99.9 / ns 300.000 | max / ns 1611100.000
+Chrono Full | samples 10000000 | loop / ms 2526.072 | extra / ns per execution +42.072 | change / % +19.983
+p50 / ns 200.000 | p99 / ns 300.000 | p99.9 / ns 300.000 | max / ns 2135100.000
+TSC Sparse | samples 100000 | loop / ms 2089.429 | extra / ns per execution -1.593 | change / % -0.756
+p50 / ns 219.298 | p99 / ns 237.116 | p99.9 / ns 289.200 | max / ns 68248.355
+TSC Full | samples 10000000 | loop / ms 2421.949 | extra / ns per execution +31.659 | change / % +15.037
+p50 / ns 224.095 | p99 / ns 232.319 | p99.9 / ns 293.311 | max / ns 1094071.409
+Native
+None | samples 0 | loop / ms 626.265 | extra / ns per execution +0.000 | change / % +0.000
+No individual timestamps: no latency percentiles for None.
+Chrono Sparse | samples 100000 | loop / ms 617.332 | extra / ns per execution -0.893 | change / % -1.426
+p50 / ns 100.000 | p99 / ns 100.000 | p99.9 / ns 100.000 | max / ns 24800.000
+Chrono Full | samples 10000000 | loop / ms 1064.710 | extra / ns per execution +43.844 | change / % +70.009
+p50 / ns 100.000 | p99 / ns 100.000 | p99.9 / ns 100.000 | max / ns 1920400.000
+TSC Sparse | samples 100000 | loop / ms 616.720 | extra / ns per execution -0.954 | change / % -1.524
+p50 / ns 73.328 | p99 / ns 76.069 | p99.9 / ns 95.258 | max / ns 2624.726
+TSC Full | samples 10000000 | loop / ms 903.459 | extra / ns per execution +27.719 | change / % +44.261
+p50 / ns 74.013 | p99 / ns 78.125 | p99.9 / ns 97.314 | max / ns 269656.661
+None: chunked 210.536 ns/batch, native 62.627 ns/batch; chunked/native 3.36x
+
+Round 3
+Chunked
+None | samples 0 | loop / ms 2124.048 | extra / ns per execution +0.000 | change / % +0.000
+No individual timestamps: no latency percentiles for None.
+Chrono Sparse | samples 100000 | loop / ms 2136.308 | extra / ns per execution +1.226 | change / % +0.577
+p50 / ns 200.000 | p99 / ns 300.000 | p99.9 / ns 300.000 | max / ns 282200.000
+Chrono Full | samples 10000000 | loop / ms 2530.434 | extra / ns per execution +40.639 | change / % +19.133
+p50 / ns 200.000 | p99 / ns 300.000 | p99.9 / ns 300.000 | max / ns 2060300.000
+TSC Sparse | samples 100000 | loop / ms 2101.677 | extra / ns per execution -2.237 | change / % -1.053
+p50 / ns 219.984 | p99 / ns 239.172 | p99.9 / ns 291.255 | max / ns 367423.246
+TSC Full | samples 10000000 | loop / ms 2424.817 | extra / ns per execution +30.077 | change / % +14.160
+p50 / ns 223.410 | p99 / ns 232.319 | p99.9 / ns 293.997 | max / ns 2116439.830
+Native
+None | samples 0 | loop / ms 626.681 | extra / ns per execution +0.000 | change / % +0.000
+No individual timestamps: no latency percentiles for None.
+Chrono Sparse | samples 100000 | loop / ms 620.444 | extra / ns per execution -0.624 | change / % -0.995
+p50 / ns 100.000 | p99 / ns 100.000 | p99.9 / ns 100.000 | max / ns 3600.000
+Chrono Full | samples 10000000 | loop / ms 1056.428 | extra / ns per execution +42.975 | change / % +68.575
+p50 / ns 100.000 | p99 / ns 100.000 | p99.9 / ns 100.000 | max / ns 1838500.000
+TSC Sparse | samples 100000 | loop / ms 626.988 | extra / ns per execution +0.031 | change / % +0.049
+p50 / ns 73.328 | p99 / ns 76.069 | p99.9 / ns 95.943 | max / ns 150015.762
+TSC Full | samples 10000000 | loop / ms 914.682 | extra / ns per execution +28.800 | change / % +45.957
+p50 / ns 74.698 | p99 / ns 78.125 | p99.9 / ns 97.314 | max / ns 2063682.840
+None: chunked 212.405 ns/batch, native 62.668 ns/batch; chunked/native 3.39x
+
+Round 4
+Chunked
+None | samples 0 | loop / ms 2111.763 | extra / ns per execution +0.000 | change / % +0.000
+No individual timestamps: no latency percentiles for None.
+Chrono Sparse | samples 100000 | loop / ms 2128.718 | extra / ns per execution +1.695 | change / % +0.803
+p50 / ns 200.000 | p99 / ns 300.000 | p99.9 / ns 300.000 | max / ns 23600.000
+Chrono Full | samples 10000000 | loop / ms 2524.518 | extra / ns per execution +41.275 | change / % +19.545
+p50 / ns 200.000 | p99 / ns 300.000 | p99.9 / ns 300.000 | max / ns 1564200.000
+TSC Sparse | samples 100000 | loop / ms 2104.461 | extra / ns per execution -0.730 | change / % -0.346
+p50 / ns 219.984 | p99 / ns 239.172 | p99.9 / ns 289.200 | max / ns 33320.998
+TSC Full | samples 10000000 | loop / ms 2411.892 | extra / ns per execution +30.013 | change / % +14.212
+p50 / ns 224.095 | p99 / ns 232.319 | p99.9 / ns 293.997 | max / ns 3233454.633
+Native
+None | samples 0 | loop / ms 629.093 | extra / ns per execution +0.000 | change / % +0.000
+No individual timestamps: no latency percentiles for None.
+Chrono Sparse | samples 100000 | loop / ms 630.529 | extra / ns per execution +0.144 | change / % +0.228
+p50 / ns 100.000 | p99 / ns 100.000 | p99.9 / ns 200.000 | max / ns 41700.000
+Chrono Full | samples 10000000 | loop / ms 1062.663 | extra / ns per execution +43.357 | change / % +68.920
+p50 / ns 100.000 | p99 / ns 100.000 | p99.9 / ns 100.000 | max / ns 3740300.000
+TSC Sparse | samples 100000 | loop / ms 627.545 | extra / ns per execution -0.155 | change / % -0.246
+p50 / ns 73.328 | p99 / ns 76.069 | p99.9 / ns 95.258 | max / ns 50314.556
+TSC Full | samples 10000000 | loop / ms 913.364 | extra / ns per execution +28.427 | change / % +45.187
+p50 / ns 75.384 | p99 / ns 78.125 | p99.9 / ns 97.999 | max / ns 1848646.519
+None: chunked 211.176 ns/batch, native 62.909 ns/batch; chunked/native 3.36x
+
+Round 5
+Chunked
+None | samples 0 | loop / ms 2106.994 | extra / ns per execution +0.000 | change / % +0.000
+No individual timestamps: no latency percentiles for None.
+Chrono Sparse | samples 100000 | loop / ms 2142.517 | extra / ns per execution +3.552 | change / % +1.686
+p50 / ns 200.000 | p99 / ns 300.000 | p99.9 / ns 300.000 | max / ns 81200.000
+Chrono Full | samples 10000000 | loop / ms 2523.329 | extra / ns per execution +41.633 | change / % +19.760
+p50 / ns 200.000 | p99 / ns 300.000 | p99.9 / ns 300.000 | max / ns 1258400.000
+TSC Sparse | samples 100000 | loop / ms 2098.133 | extra / ns per execution -0.886 | change / % -0.421
+p50 / ns 219.984 | p99 / ns 239.857 | p99.9 / ns 289.200 | max / ns 73208.607
+TSC Full | samples 10000000 | loop / ms 2425.836 | extra / ns per execution +31.884 | change / % +15.133
+p50 / ns 223.410 | p99 / ns 231.634 | p99.9 / ns 291.941 | max / ns 3707950.932
+Native
+None | samples 0 | loop / ms 619.348 | extra / ns per execution +0.000 | change / % +0.000
+No individual timestamps: no latency percentiles for None.
+Chrono Sparse | samples 100000 | loop / ms 624.576 | extra / ns per execution +0.523 | change / % +0.844
+p50 / ns 100.000 | p99 / ns 100.000 | p99.9 / ns 100.000 | max / ns 3800.000
+Chrono Full | samples 10000000 | loop / ms 1048.954 | extra / ns per execution +42.961 | change / % +69.364
+p50 / ns 100.000 | p99 / ns 100.000 | p99.9 / ns 100.000 | max / ns 961200.000
+TSC Sparse | samples 100000 | loop / ms 620.798 | extra / ns per execution +0.145 | change / % +0.234
+p50 / ns 73.328 | p99 / ns 75.384 | p99.9 / ns 95.258 | max / ns 4527.823
+TSC Full | samples 10000000 | loop / ms 914.770 | extra / ns per execution +29.542 | change / % +47.699
+p50 / ns 74.698 | p99 / ns 78.125 | p99.9 / ns 97.999 | max / ns 1806988.761
+None: chunked 210.699 ns/batch, native 61.935 ns/batch; chunked/native 3.40x
+
+Percentiles include timer overhead. No samples were corrected or removed.
+Each measured execution processes one prepared batch of 256 records.

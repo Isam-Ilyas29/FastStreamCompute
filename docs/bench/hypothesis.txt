@@ -22,3 +22,13 @@ I benchmarked them against 4,096 records and 65,536 records with chunk capacity 
 respectively, were 1.13x, 1.06x, 1.08x. Optimising with all 3 options produces a 1.53x speedup. The reduction of scratch storage correlates with the number of nodes
 (virtual registers) reduced. The median creation and destruction cost of optimising the test program was +0.138 (1.17x) microseconds. These results describe one 
 deliberately optimisable program, so they demonstrate the potential benefit of the passes rather than an expected speedup for every program.
+
+I then attempted to find latency percentiles to check if there was any unaccounted surprising behaviour on tail ends. I compared chrono and TSC in the latency harness.
+I pinned the program to logical CPU 2 using taskset and conducted 5 rounds of experiments measuring 256-record midpoint batches (as a single unit). Without individual
+timestamps, chunked execution averaged about 211 ns per batch and native averaged 62 ns, so chunked took roughly 3.4 times as long. Timing every call noticeably changed
+the workload: TSC increased total runtime by 14–15% for chunked and 44–48% for native, while chrono increased it by 19–20% and 69–70%. Using a sparse sampling technique
+by sampling just 1% of calls with TSC kept the observed runtime difference close to 0. Chrono also returned durations in 100 ns increments on this setup, making it
+too coarse to distinguish small differences in these short executions. I therefore chose sparse TSC for batch latency percentiles. The sampled chunked p50, p99 and p99.9
+were consistently around 220, 239 and 289 ns, compared with 73, 76 and 96 ns for native.  Its p99 was only about 9% above its median. These percentiles give me a baseline
+for checking whether future changes improve typical performance without making the slower executions worse. (TSC has a measured overhead of 14 ns and preturbation was
+minimised using sparse sampling).

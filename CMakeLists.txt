@@ -44,6 +44,12 @@ if(FSC_BUILD_BENCHMARKS)
         faststreamcompute_core
         benchmark::benchmark_main
     )
+
+    # The latency harness uses GNU-style assembly and x86 timestamp intrinsics.
+    if((CMAKE_SYSTEM_NAME STREQUAL "Linux" OR MINGW) AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64|amd64)$" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        add_executable(faststreamcompute_latency bench/bench_latency_harness.cpp)
+        target_link_libraries(faststreamcompute_latency PRIVATE faststreamcompute_core)
+    endif()
 endif()
 
 include(CTest)

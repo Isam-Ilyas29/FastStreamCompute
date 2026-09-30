@@ -17,7 +17,7 @@
 namespace {
     // Builder API helpers
 
-    faststreamcompute::Program makeMidpointProgram() {
+    faststreamcompute::Program createMidpointProgram() {
         faststreamcompute::Program p;
         const auto bid = p.inputf64("bid");
         const auto ask = p.inputf64("ask");
@@ -26,7 +26,7 @@ namespace {
         return p;
     }
 
-    faststreamcompute::Program makeSpreadProgram() {
+    faststreamcompute::Program createSpreadProgram() {
         faststreamcompute::Program p;
         const auto bid = p.inputf64("bid");
         const auto ask = p.inputf64("ask");
@@ -34,7 +34,7 @@ namespace {
         return p;
     }
 
-    faststreamcompute::Program makeRelativeSpreadProgram() {
+    faststreamcompute::Program createRelativeSpreadProgram() {
         faststreamcompute::Program p;
         const auto bid = p.inputf64("bid");
         const auto ask = p.inputf64("ask");
@@ -45,7 +45,7 @@ namespace {
     }
 
     // Correctness check helpers
-    std::vector<double> makeExpected(std::span<const faststreamcompute::QuoteRecord> records, const faststreamcompute::Program& program, const std::string& output_name) {
+    std::vector<double> createExpected(std::span<const faststreamcompute::QuoteRecord> records, const faststreamcompute::Program& program, const std::string& output_name) {
         std::vector<double> expected;
         expected.reserve(records.size());
 
@@ -56,7 +56,7 @@ namespace {
         return expected;
     }
 
-    bool checkOutput(benchmark::State& state, std::span<const double> output, std::span<const double> expected, std::string_view phase) {
+    bool validateOutputs(benchmark::State& state, std::span<const double> output, std::span<const double> expected, std::string_view phase) {
         if (output.size() != expected.size()) {
             state.SkipWithError(std::format("{}: output size mismatch", phase));
             return false;
@@ -79,8 +79,8 @@ static void BM_MidpointNative(benchmark::State& state) {
     const auto count = static_cast<std::size_t>(state.range(0));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeMidpointProgram();
-    const auto expected = makeExpected(records, program, "midpoint");
+    const auto program = createMidpointProgram();
+    const auto expected = createExpected(records, program, "midpoint");
 
     // Warmup
     for (unsigned int warmup = 0; warmup < 3; ++warmup) {
@@ -88,7 +88,7 @@ static void BM_MidpointNative(benchmark::State& state) {
     }
     
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -101,7 +101,7 @@ static void BM_MidpointNative(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
 
@@ -112,8 +112,8 @@ static void BM_SpreadNative(benchmark::State& state) {
     const auto count = static_cast<std::size_t>(state.range(0));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeSpreadProgram();
-    const auto expected = makeExpected(records, program, "spread");
+    const auto program = createSpreadProgram();
+    const auto expected = createExpected(records, program, "spread");
 
     // Warmup
     for (unsigned int warmup = 0; warmup < 3; ++warmup) {
@@ -121,7 +121,7 @@ static void BM_SpreadNative(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -134,7 +134,7 @@ static void BM_SpreadNative(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
 
@@ -145,8 +145,8 @@ static void BM_RelativeSpreadNative(benchmark::State& state) {
     const auto count = static_cast<std::size_t>(state.range(0));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeRelativeSpreadProgram();
-    const auto expected = makeExpected(records, program, "relative_spread");
+    const auto program = createRelativeSpreadProgram();
+    const auto expected = createExpected(records, program, "relative_spread");
 
     // Warmup
     for (unsigned int warmup = 0; warmup < 3; ++warmup) {
@@ -154,7 +154,7 @@ static void BM_RelativeSpreadNative(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -167,7 +167,7 @@ static void BM_RelativeSpreadNative(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
 
@@ -179,8 +179,8 @@ static void BM_MidpointBytecodeExecute(benchmark::State& state) {
     const auto count = static_cast<std::size_t>(state.range(0));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeMidpointProgram();
-    const auto expected = makeExpected(records, program, "midpoint");
+    const auto program = createMidpointProgram();
+    const auto expected = createExpected(records, program, "midpoint");
 
     faststreamcompute::ExecutionBlueprint blueprint(program);
     faststreamcompute::BytecodeExecutor executor(blueprint);
@@ -191,7 +191,7 @@ static void BM_MidpointBytecodeExecute(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -204,7 +204,7 @@ static void BM_MidpointBytecodeExecute(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
 
@@ -215,8 +215,8 @@ static void BM_SpreadBytecodeExecute(benchmark::State& state) {
     const auto count = static_cast<std::size_t>(state.range(0));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeSpreadProgram();
-    const auto expected = makeExpected(records, program, "spread");
+    const auto program = createSpreadProgram();
+    const auto expected = createExpected(records, program, "spread");
 
     faststreamcompute::ExecutionBlueprint blueprint(program);
     faststreamcompute::BytecodeExecutor executor(blueprint);
@@ -227,7 +227,7 @@ static void BM_SpreadBytecodeExecute(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -240,7 +240,7 @@ static void BM_SpreadBytecodeExecute(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
 
@@ -251,8 +251,8 @@ static void BM_RelativeSpreadBytecodeExecute(benchmark::State& state) {
     const auto count = static_cast<std::size_t>(state.range(0));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeRelativeSpreadProgram();
-    const auto expected = makeExpected(records, program, "relative_spread");
+    const auto program = createRelativeSpreadProgram();
+    const auto expected = createExpected(records, program, "relative_spread");
 
     faststreamcompute::ExecutionBlueprint blueprint(program);
     faststreamcompute::BytecodeExecutor executor(blueprint);
@@ -263,7 +263,7 @@ static void BM_RelativeSpreadBytecodeExecute(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -276,7 +276,7 @@ static void BM_RelativeSpreadBytecodeExecute(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
     
@@ -288,8 +288,8 @@ static void BM_MidpointChunkedBytecodeExecute(benchmark::State& state) {
     const auto chunk_capacity = static_cast<std::size_t>(state.range(1));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeMidpointProgram();
-    const auto expected = makeExpected(records, program, "midpoint");
+    const auto program = createMidpointProgram();
+    const auto expected = createExpected(records, program, "midpoint");
 
     faststreamcompute::ExecutionBlueprint blueprint(program);
     faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
@@ -300,7 +300,7 @@ static void BM_MidpointChunkedBytecodeExecute(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -313,7 +313,7 @@ static void BM_MidpointChunkedBytecodeExecute(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
 
@@ -325,8 +325,8 @@ static void BM_SpreadChunkedBytecodeExecute(benchmark::State& state) {
     const auto chunk_capacity = static_cast<std::size_t>(state.range(1));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeSpreadProgram();
-    const auto expected = makeExpected(records, program, "spread");
+    const auto program = createSpreadProgram();
+    const auto expected = createExpected(records, program, "spread");
 
     faststreamcompute::ExecutionBlueprint blueprint(program);
     faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
@@ -337,7 +337,7 @@ static void BM_SpreadChunkedBytecodeExecute(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -350,7 +350,7 @@ static void BM_SpreadChunkedBytecodeExecute(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
 
@@ -362,8 +362,8 @@ static void BM_RelativeSpreadChunkedBytecodeExecute(benchmark::State& state) {
     const auto chunk_capacity = static_cast<std::size_t>(state.range(1));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeRelativeSpreadProgram();
-    const auto expected = makeExpected(records, program, "relative_spread");
+    const auto program = createRelativeSpreadProgram();
+    const auto expected = createExpected(records, program, "relative_spread");
 
     faststreamcompute::ExecutionBlueprint blueprint(program);
     faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
@@ -374,7 +374,7 @@ static void BM_RelativeSpreadChunkedBytecodeExecute(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -387,7 +387,7 @@ static void BM_RelativeSpreadChunkedBytecodeExecute(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
 
@@ -396,7 +396,7 @@ static void BM_RelativeSpreadChunkedBytecodeExecute(benchmark::State& state) {
 
 // Preparation: build the Program once and time blueprint/executor construction and destruction
 static void BM_MidpointBytecodeCreateDestroy(benchmark::State& state) {
-    const auto program = makeMidpointProgram();
+    const auto program = createMidpointProgram();
     
     // Warmup
     for (int warmup = 0; warmup < 3; ++warmup) {
@@ -416,7 +416,7 @@ static void BM_MidpointBytecodeCreateDestroy(benchmark::State& state) {
 }
 
 static void BM_SpreadBytecodeCreateDestroy(benchmark::State& state) {
-    const auto program = makeSpreadProgram();
+    const auto program = createSpreadProgram();
 
     // Warmup
     for (int warmup = 0; warmup < 3; ++warmup) {
@@ -436,7 +436,7 @@ static void BM_SpreadBytecodeCreateDestroy(benchmark::State& state) {
 }
 
 static void BM_RelativeSpreadBytecodeCreateDestroy(benchmark::State& state) {
-    const auto program = makeRelativeSpreadProgram();
+    const auto program = createRelativeSpreadProgram();
 
     // Warmup
     for (int warmup = 0; warmup < 3; ++warmup) {
@@ -460,8 +460,8 @@ static void BM_MidpointBytecodeCreateExecuteDestroy(benchmark::State& state) {
     const auto count = static_cast<std::size_t>(state.range(0));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeMidpointProgram();
-    const auto expected = makeExpected(records, program, "midpoint");
+    const auto program = createMidpointProgram();
+    const auto expected = createExpected(records, program, "midpoint");
 
     // Warmup
     for (int warmup = 0; warmup < 3; ++warmup) {
@@ -471,7 +471,7 @@ static void BM_MidpointBytecodeCreateExecuteDestroy(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -487,7 +487,7 @@ static void BM_MidpointBytecodeCreateExecuteDestroy(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
 
@@ -498,8 +498,8 @@ static void BM_SpreadBytecodeCreateExecuteDestroy(benchmark::State& state) {
     const auto count = static_cast<std::size_t>(state.range(0));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeSpreadProgram();
-    const auto expected = makeExpected(records, program, "spread");
+    const auto program = createSpreadProgram();
+    const auto expected = createExpected(records, program, "spread");
 
     // Warmup
     for (int warmup = 0; warmup < 3; ++warmup) {
@@ -509,7 +509,7 @@ static void BM_SpreadBytecodeCreateExecuteDestroy(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -525,7 +525,7 @@ static void BM_SpreadBytecodeCreateExecuteDestroy(benchmark::State& state) {
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
 
@@ -536,8 +536,8 @@ static void BM_RelativeSpreadBytecodeCreateExecuteDestroy(benchmark::State& stat
     const auto count = static_cast<std::size_t>(state.range(0));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeRelativeSpreadProgram();
-    const auto expected = makeExpected(records, program, "relative_spread");
+    const auto program = createRelativeSpreadProgram();
+    const auto expected = createExpected(records, program, "relative_spread");
 
     // Warmup
     for (int warmup = 0; warmup < 3; ++warmup) {
@@ -547,7 +547,7 @@ static void BM_RelativeSpreadBytecodeCreateExecuteDestroy(benchmark::State& stat
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -563,7 +563,7 @@ static void BM_RelativeSpreadBytecodeCreateExecuteDestroy(benchmark::State& stat
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
 
@@ -573,7 +573,7 @@ static void BM_RelativeSpreadBytecodeCreateExecuteDestroy(benchmark::State& stat
 // Chunked preparation and lifecycle: same boundaries as the row-bytecode benchmarks.
 static void BM_MidpointChunkedBytecodeCreateDestroy(benchmark::State& state) {
     const auto chunk_capacity = static_cast<std::size_t>(state.range(0));
-    const auto program = makeMidpointProgram();
+    const auto program = createMidpointProgram();
 
     // Warmup
     for (int warmup = 0; warmup < 3; ++warmup) {
@@ -597,8 +597,8 @@ static void BM_MidpointChunkedBytecodeCreateExecuteDestroy(benchmark::State& sta
     const auto chunk_capacity = static_cast<std::size_t>(state.range(1));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeMidpointProgram();
-    const auto expected = makeExpected(records, program, "midpoint");
+    const auto program = createMidpointProgram();
+    const auto expected = createExpected(records, program, "midpoint");
 
     // Warmup
     for (int warmup = 0; warmup < 3; ++warmup) {
@@ -608,7 +608,7 @@ static void BM_MidpointChunkedBytecodeCreateExecuteDestroy(benchmark::State& sta
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -624,7 +624,7 @@ static void BM_MidpointChunkedBytecodeCreateExecuteDestroy(benchmark::State& sta
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
 
@@ -633,7 +633,7 @@ static void BM_MidpointChunkedBytecodeCreateExecuteDestroy(benchmark::State& sta
 
 static void BM_SpreadChunkedBytecodeCreateDestroy(benchmark::State& state) {
     const auto chunk_capacity = static_cast<std::size_t>(state.range(0));
-    const auto program = makeSpreadProgram();
+    const auto program = createSpreadProgram();
 
     // Warmup
     for (int warmup = 0; warmup < 3; ++warmup) {
@@ -657,8 +657,8 @@ static void BM_SpreadChunkedBytecodeCreateExecuteDestroy(benchmark::State& state
     const auto chunk_capacity = static_cast<std::size_t>(state.range(1));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeSpreadProgram();
-    const auto expected = makeExpected(records, program, "spread");
+    const auto program = createSpreadProgram();
+    const auto expected = createExpected(records, program, "spread");
 
     // Warmup
     for (int warmup = 0; warmup < 3; ++warmup) {
@@ -668,7 +668,7 @@ static void BM_SpreadChunkedBytecodeCreateExecuteDestroy(benchmark::State& state
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -684,7 +684,7 @@ static void BM_SpreadChunkedBytecodeCreateExecuteDestroy(benchmark::State& state
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
 
@@ -693,7 +693,7 @@ static void BM_SpreadChunkedBytecodeCreateExecuteDestroy(benchmark::State& state
 
 static void BM_RelativeSpreadChunkedBytecodeCreateDestroy(benchmark::State& state) {
     const auto chunk_capacity = static_cast<std::size_t>(state.range(0));
-    const auto program = makeRelativeSpreadProgram();
+    const auto program = createRelativeSpreadProgram();
 
     // Warmup
     for (int warmup = 0; warmup < 3; ++warmup) {
@@ -717,8 +717,8 @@ static void BM_RelativeSpreadChunkedBytecodeCreateExecuteDestroy(benchmark::Stat
     const auto chunk_capacity = static_cast<std::size_t>(state.range(1));
     const auto records = faststreamcompute::generateRecords(count);
     std::vector<double> output(count);
-    const auto program = makeRelativeSpreadProgram();
-    const auto expected = makeExpected(records, program, "relative_spread");
+    const auto program = createRelativeSpreadProgram();
+    const auto expected = createExpected(records, program, "relative_spread");
 
     // Warmup
     for (int warmup = 0; warmup < 3; ++warmup) {
@@ -728,7 +728,7 @@ static void BM_RelativeSpreadChunkedBytecodeCreateExecuteDestroy(benchmark::Stat
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "before timing")) {
+    if (!validateOutputs(state, output, expected, "before timing")) {
         return;
     }
 
@@ -744,7 +744,7 @@ static void BM_RelativeSpreadChunkedBytecodeCreateExecuteDestroy(benchmark::Stat
     }
 
     // Correctness check
-    if (!checkOutput(state, output, expected, "after timing")) {
+    if (!validateOutputs(state, output, expected, "after timing")) {
         return;
     }
 
