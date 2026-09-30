@@ -39,3 +39,14 @@ randomly interleaved repetitions, fusion reduced median execution time by 41.83%
 363,246 ns to 213,206 ns. Throughput improved by approximately 1.7× at both sizes. Median creation and destruction time increased by 75 ns for the long program and 45 ns
 for midpoint. For the long workload, one execution saved far more time than fusion added during preparation, so the preparation cost was recovered during the first
 execution.
+
+My hypothesis was that choosing a chunk capacity that brought the program’s scratch allocation close to L1 cache capacity would give the best performance. However, across 
+10 equations, capacity 64 outperformed 256 in 9 cases, losing for the polynomial. Its scratch allocation was only around 4–31% of L1 capacity, depending on the equation. 
+Further controlled experiments strongly suggest that smaller chunks make better use of out-of-order execution, enabling more instruction-level parallelism between stages 
+in the division-heavy workloads. When fences restricted this execution, the advantage disappeared or reversed. This shows that cache capacity alone is insufficient to 
+choose the best chunk size.
+
+The reason I layed out consecutive lanes in the scratch buffer was for spatial locality. After benchmarking it on a polynomial test at capacity 256, the alternative of
+grouping all registers for each lane together was 3.87x slower. This program specifically had 30 registers, so accessing consecutive lanes advanced 8 bytes in the current 
+layout but 240 bytes in the alternative. The cache line in my CPU is 64 bytes so this was enough for 8 doubles. There was no reason to investigate temporal locaclity at
+this point as the chunked executor already reuses intermediate values soon after producing them.

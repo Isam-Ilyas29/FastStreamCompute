@@ -65,8 +65,6 @@ namespace {
         }
 
         for (std::size_t i = 0; i < output.size(); ++i) {
-            // Exact comparison is intentional for these finite inputs and the
-            // matching operation order under our strict floating-point build flags.
             if (output[i] != expected[i]) {
                 state.SkipWithError(std::format("{}: row {}: got {}, expected {}", phase, i, output[i], expected[i]));
                 return false;
@@ -169,7 +167,6 @@ static void BM_LongFusionChunkedBytecodeCreateDestroyFusionOn(benchmark::State& 
         faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
         benchmark::DoNotOptimize(executor);
         benchmark::ClobberMemory();
-        // Both local objects are destroyed here, inside the timed iteration.
     }
 }
 
@@ -190,7 +187,6 @@ static void BM_LongFusionChunkedBytecodeCreateDestroyFusionOff(benchmark::State&
         faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
         benchmark::DoNotOptimize(executor);
         benchmark::ClobberMemory();
-        // Both local objects are destroyed here, inside the timed iteration.
     }
 }
 
@@ -211,7 +207,6 @@ static void BM_MidpointChunkedBytecodeCreateDestroyFusionOn(benchmark::State& st
         faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
         benchmark::DoNotOptimize(executor);
         benchmark::ClobberMemory();
-        // Both local objects are destroyed here, inside the timed iteration.
     }
 }
 
@@ -232,7 +227,6 @@ static void BM_MidpointChunkedBytecodeCreateDestroyFusionOff(benchmark::State& s
         faststreamcompute::ChunkedBytecodeExecutor executor(blueprint, chunk_capacity);
         benchmark::DoNotOptimize(executor);
         benchmark::ClobberMemory();
-        // Both local objects are destroyed here, inside the timed iteration.
     }
 }
 
