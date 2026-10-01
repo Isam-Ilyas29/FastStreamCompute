@@ -1,0 +1,108 @@
+Worker-count experiment, 2026-10-01. Project unchanged; disposable prototype, not integrated.
+Intel i7-13700H: P physical cores logical pairs (0,1),(2,3),(4,5),(6,7),(8,9),(10,11); E cores12..19.
+GCC16.2 -O3 -DNDEBUG -std=c++20 -fno-fast-math -ffp-contract=off; generic x86-64, no AVX2.
+Same compound expression as bench_fusion, fusion enabled, chunk capacity256. Original executor copied with input vector-reference changed to const span. No arithmetic changes.
+Persistent spinning jthreads, private scratch, acquire/release job publication and completion, one caller, one job outstanding. 64-byte padded control atomics; aligned output and partition boundaries. Equal partitions rounded to8records; final remainder retained.
+Timing includes dispatch, execution and waiting for all workers. Excludes construction, allocation, correctness checks. Direct baseline pinned CPU2 and uses same span-adapted executor.
+L0: caller0; workers prefix of [2,4,6,8,10,12,13,14,15,16,17,18,19,3,5,7,9,11,1].
+L1: caller0; workers prefix of [2,4,6,8,10,3,5,7,9,11,12,13,14,15,16,17,18,19,1].
+L2: caller12; workers prefix of [0,2,4,6,8,10,13,14,15,16,17,18,19,1,3,5,7,9,11].
+Sweep: 1..19 workers in three placements, identical L0/L1 counts1..5 deduplicated. 52 pooled configurations plus direct baseline, 1048576records. 8random-interleaved repetitions,min0.06s.
+Confirmation1: direct,L0 counts4/5/19,L1 counts7/8/9/10,L2 counts5/6. Both65536and1048576records,20random-interleaved repetitions,min0.12s.
+Confirmation2: direct,L0count4,L1count10,L2count6. Bothsizes,20random-interleaved repetitions,min0.2s.
+Correctness: all57 placement/count combinations,0/3/845/4097records, changedinput reuse; all outputs compared exactly to reference evaluator. Each benchmark validates before/after timing against direct. No errors. No ThreadSanitizer or PMU attribution.
+No idle confirmation received this turn; user previously authorised idle benchmarks. Background activity and thermal/frequency variation are not ruled out.
+These results identify best tested configurations for this implementation/workload, not a global optimal core count. No weighted partitions, work-stealing or exhaustive affinity permutations tested. Equal partitions disadvantage mixed-speed cores. Busy-wait consumes CPU/power.
+Recommendation:6Pworkers plus1Ecaller: near-best median, fewer worker threads and more stable than10SMTworkers across5Pcores plus1Pcaller. Both use all6physicalPcores overall;6workerconfiguration additionally uses1Ecore. 4workers was not optimal in this experiment.
+10worker1048576median advantage over6workers under1% in both confirmations; not established as a meaningful performance lead. At65536records ranking reverses. Do not claim a uniquely optimal count.
+Do not describe worker count as physical core count. Treat CV claim as prototype until integrated and revalidated.
+
+discovery: raw repetitions=424; errors=0
+Name | Median batch/us | Million records/s | Speedup vs direct | CV/%
+Long/Direct/1048576/real_time | 3875.966 | 270.533 | 1.000 | 3.07
+Long/L0/W1/1048576/real_time | 4002.343 | 261.991 | 0.968 | 6.10
+Long/L0/W10/1048576/real_time | 1568.104 | 668.690 | 2.472 | 4.38
+Long/L0/W11/1048576/real_time | 1509.860 | 694.486 | 2.567 | 32.73
+Long/L0/W12/1048576/real_time | 1387.762 | 755.588 | 2.793 | 16.85
+Long/L0/W13/1048576/real_time | 1222.121 | 857.997 | 3.172 | 22.13
+Long/L0/W14/1048576/real_time | 1103.537 | 950.196 | 3.512 | 38.99
+Long/L0/W15/1048576/real_time | 1062.881 | 986.541 | 3.647 | 20.28
+Long/L0/W16/1048576/real_time | 1059.491 | 989.697 | 3.658 | 14.89
+Long/L0/W17/1048576/real_time | 1044.421 | 1003.978 | 3.711 | 47.86
+Long/L0/W18/1048576/real_time | 1061.039 | 988.254 | 3.653 | 91.51
+Long/L0/W19/1048576/real_time | 974.976 | 1075.489 | 3.975 | 22.26
+Long/L0/W2/1048576/real_time | 1924.573 | 544.836 | 2.014 | 7.94
+Long/L0/W3/1048576/real_time | 1322.564 | 792.836 | 2.931 | 8.10
+Long/L0/W4/1048576/real_time | 985.612 | 1063.883 | 3.933 | 6.11
+Long/L0/W5/1048576/real_time | 858.569 | 1221.307 | 4.514 | 15.96
+Long/L0/W6/1048576/real_time | 2476.692 | 423.378 | 1.565 | 21.94
+Long/L0/W7/1048576/real_time | 2222.249 | 471.854 | 1.744 | 12.79
+Long/L0/W8/1048576/real_time | 2414.954 | 434.201 | 1.605 | 24.64
+Long/L0/W9/1048576/real_time | 1795.556 | 583.984 | 2.159 | 4.22
+Long/L1/W10/1048576/real_time | 669.368 | 1566.516 | 5.790 | 46.16
+Long/L1/W11/1048576/real_time | 1334.571 | 785.703 | 2.904 | 67.19
+Long/L1/W12/1048576/real_time | 1564.289 | 670.321 | 2.478 | 51.94
+Long/L1/W13/1048576/real_time | 1292.207 | 811.461 | 2.999 | 46.88
+Long/L1/W14/1048576/real_time | 1270.579 | 825.274 | 3.051 | 12.28
+Long/L1/W15/1048576/real_time | 1077.034 | 973.578 | 3.599 | 25.62
+Long/L1/W16/1048576/real_time | 1211.563 | 865.474 | 3.199 | 45.15
+Long/L1/W17/1048576/real_time | 953.348 | 1099.888 | 4.066 | 41.05
+Long/L1/W18/1048576/real_time | 912.891 | 1148.633 | 4.246 | 27.81
+Long/L1/W19/1048576/real_time | 1054.174 | 994.690 | 3.677 | 66.13
+Long/L1/W6/1048576/real_time | 950.279 | 1103.440 | 4.079 | 8.41
+Long/L1/W7/1048576/real_time | 827.533 | 1267.110 | 4.684 | 17.98
+Long/L1/W8/1048576/real_time | 716.701 | 1463.059 | 5.408 | 13.19
+Long/L1/W9/1048576/real_time | 757.641 | 1384.000 | 5.116 | 29.26
+Long/L2/W1/1048576/real_time | 3952.052 | 265.324 | 0.981 | 5.73
+Long/L2/W10/1048576/real_time | 1514.638 | 692.295 | 2.559 | 47.49
+Long/L2/W11/1048576/real_time | 1739.173 | 602.916 | 2.229 | 25.63
+Long/L2/W12/1048576/real_time | 1329.275 | 788.833 | 2.916 | 19.65
+Long/L2/W13/1048576/real_time | 1191.501 | 880.046 | 3.253 | 76.10
+Long/L2/W14/1048576/real_time | 1109.206 | 945.339 | 3.494 | 15.21
+Long/L2/W15/1048576/real_time | 1235.806 | 848.495 | 3.136 | 23.63
+Long/L2/W16/1048576/real_time | 1028.817 | 1019.206 | 3.767 | 19.83
+Long/L2/W17/1048576/real_time | 1121.482 | 934.992 | 3.456 | 20.21
+Long/L2/W18/1048576/real_time | 1060.575 | 988.686 | 3.655 | 9.53
+Long/L2/W19/1048576/real_time | 1066.492 | 983.201 | 3.634 | 32.29
+Long/L2/W2/1048576/real_time | 1927.278 | 544.071 | 2.011 | 2.97
+Long/L2/W3/1048576/real_time | 1280.044 | 819.172 | 3.028 | 7.75
+Long/L2/W4/1048576/real_time | 943.970 | 1110.815 | 4.106 | 50.53
+Long/L2/W5/1048576/real_time | 749.805 | 1398.465 | 5.169 | 12.31
+Long/L2/W6/1048576/real_time | 711.642 | 1473.459 | 5.447 | 20.70
+Long/L2/W7/1048576/real_time | 2164.996 | 484.332 | 1.790 | 9.43
+Long/L2/W8/1048576/real_time | 2473.522 | 423.920 | 1.567 | 21.71
+Long/L2/W9/1048576/real_time | 1666.771 | 629.106 | 2.325 | 29.94
+
+confirmation1: raw repetitions=400; errors=0
+Name | Median batch/us | Million records/s | Speedup vs direct | CV/%
+Long/Direct/1048576/real_time | 3854.049 | 272.071 | 1.000 | 8.42
+Long/Direct/65536/real_time | 202.960 | 322.901 | 1.000 | 7.26
+Long/L0/W19/1048576/real_time | 882.989 | 1187.530 | 4.365 | 37.45
+Long/L0/W19/65536/real_time | 61.425 | 1066.935 | 3.304 | 205.05
+Long/L0/W4/1048576/real_time | 961.520 | 1090.540 | 4.008 | 17.60
+Long/L0/W4/65536/real_time | 53.349 | 1228.435 | 3.804 | 11.39
+Long/L0/W5/1048576/real_time | 725.017 | 1446.278 | 5.316 | 9.98
+Long/L0/W5/65536/real_time | 43.889 | 1493.228 | 4.624 | 12.08
+Long/L1/W10/1048576/real_time | 610.101 | 1718.693 | 6.317 | 26.53
+Long/L1/W10/65536/real_time | 35.239 | 1859.741 | 5.759 | 9.82
+Long/L1/W7/1048576/real_time | 773.204 | 1356.143 | 4.985 | 6.31
+Long/L1/W7/65536/real_time | 46.576 | 1407.083 | 4.358 | 10.74
+Long/L1/W8/1048576/real_time | 707.626 | 1481.823 | 5.446 | 27.97
+Long/L1/W8/65536/real_time | 40.915 | 1601.770 | 4.961 | 8.89
+Long/L1/W9/1048576/real_time | 648.464 | 1617.015 | 5.943 | 26.14
+Long/L1/W9/65536/real_time | 38.360 | 1708.464 | 5.291 | 7.55
+Long/L2/W5/1048576/real_time | 771.036 | 1359.957 | 4.999 | 15.46
+Long/L2/W5/65536/real_time | 42.789 | 1531.592 | 4.743 | 16.56
+Long/L2/W6/1048576/real_time | 614.010 | 1707.749 | 6.277 | 13.56
+Long/L2/W6/65536/real_time | 36.583 | 1791.450 | 5.548 | 9.34
+
+confirmation2: raw repetitions=160; errors=0
+Name | Median batch/us | Million records/s | Speedup vs direct | CV/%
+Long/Direct/1048576/real_time | 3958.326 | 264.904 | 1.000 | 4.57
+Long/Direct/65536/real_time | 208.467 | 314.371 | 1.000 | 6.42
+Long/L0/W4/1048576/real_time | 978.161 | 1071.988 | 4.047 | 21.11
+Long/L0/W4/65536/real_time | 56.336 | 1163.303 | 3.700 | 12.61
+Long/L1/W10/1048576/real_time | 626.950 | 1672.503 | 6.314 | 35.74
+Long/L1/W10/65536/real_time | 38.427 | 1705.485 | 5.425 | 10.10
+Long/L2/W6/1048576/real_time | 631.971 | 1659.216 | 6.263 | 9.06
+Long/L2/W6/65536/real_time | 36.838 | 1779.014 | 5.659 | 10.29

@@ -1,0 +1,73 @@
+Disposable Gate 8 / allocation experiments, Windows Intel i7-13700H, 2026-09-30.
+Project unchanged. Prototype source and executables removed after verification at user request; raw measurements retained.
+GCC 16.2, -O3 -DNDEBUG -std=c++20 -fno-fast-math -ffp-contract=off. No AVX2 enablement or arithmetic changes.
+Multicore: original chunked executor copied with input span adaptation. Capacity256, fusion enabled. Single-caller, synchronous, one job in flight.
+Caller pinned CPU0, workers CPU2/4/6/8 (distinct P cores); direct baseline CPU2. Four workers use four worker cores plus a separate caller core.
+Persistent std::jthread workers reuse scratch; partition input views and all outputs. Output64byte aligned. Spin control atomics64byte separated. CPU0 caller is busy while spinning.
+Sleeping pool: mutex/CV generation+completion. Spinning pool: per-worker acquire/release generation flags + pause; consumes CPU while idle. No TSan or hardware false-sharing counter validation.
+Correctness: reference comparisons, empty/tiny/uneven/tail sizes, 1/2/4workers, reuse changed data, NaN-filled output, multiple outputs, startup/shutdown. Reviewer checked single-caller synchronization protocol.
+Throughput: 10 random-interleaved repetitions, min0.07s, 560 raw results. Follow-up20repetitions/min0.12s, 160 raw results. Zero reported correctness errors.
+Latency: 3 rotated mode orders,10000 samples each,65536records, chrono caller start-to-completion,100ns observed quantisation. Whole-loop None/Full controls also recorded. Closed-loop batch latency; not record latency or loaded-service queue latency.
+Latency controls varied substantially, including a sleeping-worker stall and negative Full-vs-None changes for spinning; no overhead subtraction or proof of unperturbed percentiles.
+
+Throughput discovery medians / microseconds:
+Workload | Records | Direct | Sleep1 | Sleep2 | Sleep4 | Spin1 | Spin2 | Spin4
+Midpoint | 256 | 0.214 | 13.407 | 23.128 | 60.143 | 0.475 | 0.414 | 0.490
+Midpoint | 4096 | 3.628 | 16.711 | 19.832 | 26.365 | 3.943 | 2.334 | 1.344
+Midpoint | 65536 | 65.785 | 99.399 | 54.838 | 61.266 | 65.970 | 30.639 | 16.179
+Midpoint | 1048576 | 1409.939 | 1871.904 | 1038.637 | 751.099 | 1427.125 | 709.968 | 362.747
+LongFusion | 256 | 0.752 | 14.430 | 21.651 | 44.909 | 1.033 | 0.681 | 0.616
+LongFusion | 4096 | 12.376 | 26.792 | 29.536 | 29.327 | 12.710 | 6.967 | 3.772
+LongFusion | 65536 | 206.551 | 432.949 | 236.420 | 279.335 | 206.818 | 102.771 | 53.318
+LongFusion | 1048576 | 3832.725 | 4332.861 | 2285.717 | 1334.566 | 3715.904 | 1854.330 | 955.419
+
+LongFusion confirmation medians:
+Records | Mode | batch time/us | million records/s | speedup vs direct | real-time CV/%
+65536 | 0 | 208.826 | 313.831 | 1.000 | 2.78
+65536 | -1 | 207.663 | 315.589 | 1.006 | 10.81
+65536 | -2 | 102.466 | 639.590 | 2.038 | 1.97
+65536 | -4 | 52.242 | 1254.461 | 3.997 | 13.64
+1048576 | 0 | 3739.128 | 280.433 | 1.000 | 4.16
+1048576 | -1 | 3671.773 | 285.578 | 1.018 | 3.18
+1048576 | -2 | 1896.699 | 552.843 | 1.971 | 6.66
+1048576 | -4 | 930.084 | 1127.400 | 4.020 | 4.14
+
+Latency: median of three round p50s and range of three round p99s (microseconds; each sample is a completed65536recordbatch):
+Midpoint | Direct | p50 63.1 | p99 range 108.2 to 118.8
+Midpoint | Sleeping4 | p50 32.3 | p99 range 49.5 to 1488.1
+Midpoint | Spinning4 | p50 15.0 | p99 range 21.2 to 24.5
+LongFusion | Direct | p50 200.8 | p99 range 341.8 to 449.7
+LongFusion | Sleeping4 | p50 66.7 | p99 range 128.0 to 406.2
+LongFusion | Spinning4 | p50 49.3 | p99 range 73.0 to 85.2
+
+Allocator: same fusion/construction/two blueprint copies/vector growth/scratchzero/destruction. Program built before timing. Capacity256. Standard-clone baseline checked against production performance and data.
+PMRheap uses new_delete_resource; arenas reset only after object destruction. PMR upstream=null_memory_resource; custom bump uses std::align, no upstream; bounded reservoir. Strings staystd::string; measured short names use SSO.
+Run1 20randominterleavedreps min0.1s; confirmation20reps min0.1s with three main variants. All equivalence/alignment/exhaustion/lifetime checks pass.
+Logical allocation requests midpoint14/long19. Requested bytes13376/48848, peaklive13048/47376, reservoir14528/50304 bytes. Reused arena initial reservoir allocation outside timing; no per-preparation heap calls for those requests. Fresh variants include one reservoir allocate/free per preparation.
+Allocator figures are cold preparation lifecycle improvements; no steady execution speedup measured or implied. Long standard baseline moved1763->2451ns between suites; use range or midpoint stable result, not one universal long percentage.
+
+run1.json medians / ns
+Midpoint/PmrNewDelete/real_time | 800.082
+LongFusion/ProductionStd/real_time | 1770.707
+Midpoint/PmrMonotonicReused/real_time | 211.097
+Midpoint/CustomBumpFresh/real_time | 283.024
+Midpoint/ProductionStd/real_time | 748.239
+LongFusion/PmrMonotonicFresh/real_time | 1090.409
+Midpoint/PmrMonotonicFresh/real_time | 308.209
+LongFusion/CopiedStd/real_time | 1762.672
+LongFusion/PmrNewDelete/real_time | 1871.521
+LongFusion/CustomBumpReused/real_time | 726.036
+LongFusion/CustomBumpFresh/real_time | 1059.742
+Midpoint/CopiedStd/real_time | 759.455
+Midpoint/CustomBumpReused/real_time | 182.818
+LongFusion/PmrMonotonicReused/real_time | 747.966
+
+run2-confirm.json medians / ns
+Midpoint/CopiedStd/real_time | 757.185
+LongFusion/CopiedStd/real_time | 2451.454
+Midpoint/PmrMonotonicReused/real_time | 212.074
+LongFusion/PmrMonotonicReused/real_time | 723.669
+LongFusion/CustomBumpReused/real_time | 691.904
+Midpoint/CustomBumpReused/real_time | 181.645
+
+Most defensible prototype claims: approximately4x throughput for1,048,576recordLongFusion on4spinningPcoreworkers vsdirect; midpoint setup lifecycle reducedabout72% PMR/76%custom acrossbothruns. Label as prototype experiments pendingintegration.
